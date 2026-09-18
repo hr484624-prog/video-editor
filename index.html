@@ -2,35 +2,45 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-<title>VidyCut</title>
+<title>VidyCut Editor</title>
 
 <style>
+
 *{
+    box-sizing:border-box;
     margin:0;
     padding:0;
-    box-sizing:border-box;
     font-family:Arial,sans-serif;
 }
 
 body{
-    background:#08080c;
+    background:#08090d;
     color:white;
-    min-height:100vh;
+    height:100vh;
+    overflow:hidden;
 }
 
-header{
-    height:70px;
-    padding:0 18px;
+/* TOP BAR */
+
+.top{
+    height:58px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    border-bottom:1px solid #27272f;
+    padding:0 15px;
+    background:#0d0e13;
+}
+
+.close{
+    font-size:29px;
+    color:#ddd;
 }
 
 .logo{
-    font-size:27px;
+    font-size:20px;
     font-weight:bold;
 }
 
@@ -38,264 +48,423 @@ header{
     color:#8b5cf6;
 }
 
-.settings{
-    font-size:23px;
-}
-
-.main{
-    padding:25px 18px 100px;
-}
-
-.title{
-    font-size:29px;
+.export{
+    background:#8b5cf6;
+    border:0;
+    color:white;
+    padding:9px 15px;
+    border-radius:8px;
     font-weight:bold;
 }
 
-.sub{
-    color:#92929e;
-    margin-top:8px;
-    margin-bottom:25px;
-}
+/* PREVIEW */
 
-.project{
-    background:linear-gradient(135deg,#8b5cf6,#6366f1);
-    border-radius:22px;
-    padding:30px 20px;
-    text-align:center;
-}
-
-.project-icon{
-    font-size:52px;
-    margin-bottom:10px;
-}
-
-.project h2{
-    font-size:23px;
-    margin-bottom:8px;
-}
-
-.project p{
-    font-size:14px;
-    color:#eeeeF5;
-    margin-bottom:20px;
-}
-
-.create{
-    display:inline-block;
-    background:white;
-    color:#111;
-    padding:14px 28px;
-    border-radius:30px;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.section{
-    margin-top:30px;
-}
-
-.section h2{
-    font-size:21px;
-    margin-bottom:15px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:13px;
-}
-
-.card{
-    background:#17171e;
-    border:1px solid #292932;
-    border-radius:17px;
-    padding:20px;
-}
-
-.card-icon{
-    font-size:31px;
-    margin-bottom:11px;
-}
-
-.card h3{
-    font-size:16px;
-    margin-bottom:5px;
-}
-
-.card p{
-    color:#858590;
-    font-size:12px;
-}
-
-.bottom{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    height:75px;
-    background:#111116;
-    border-top:1px solid #292932;
+.preview{
+    height:43vh;
+    min-height:280px;
+    background:#111217;
     display:flex;
-    justify-content:space-around;
     align-items:center;
+    justify-content:center;
+    position:relative;
 }
 
-.nav{
+video{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.empty{
     text-align:center;
-    color:#858590;
-    font-size:12px;
+    color:#777984;
+}
+
+.empty-icon{
+    font-size:55px;
+    margin-bottom:12px;
+}
+
+.add-video{
+    display:inline-block;
+    margin-top:15px;
+    background:#8b5cf6;
+    color:white;
+    padding:12px 22px;
+    border-radius:25px;
     cursor:pointer;
 }
 
-.nav-icon{
-    font-size:23px;
-    margin-bottom:5px;
+input{
+    display:none;
 }
 
-.active{
-    color:#a78bfa;
+/* CONTROLS */
+
+.controls{
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:35px;
+    background:#0d0e13;
 }
+
+.play{
+    font-size:28px;
+}
+
+.undo{
+    font-size:27px;
+}
+
+/* TIME */
+
+.time{
+    height:25px;
+    display:flex;
+    justify-content:space-between;
+    padding:0 15px;
+    color:#8d8f99;
+    font-size:11px;
+}
+
+/* TIMELINE */
+
+.timeline{
+    height:105px;
+    background:#111217;
+    border-top:1px solid #22242c;
+    border-bottom:1px solid #22242c;
+    padding:10px 10px;
+    position:relative;
+}
+
+.film{
+    height:58px;
+    display:flex;
+    overflow:hidden;
+    border-radius:5px;
+    background:#20222a;
+}
+
+.frame{
+    min-width:75px;
+    height:58px;
+    border-right:2px solid #111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#777;
+    font-size:12px;
+}
+
+.audio-line{
+    height:4px;
+    background:#22aeea;
+    margin-top:9px;
+    border-radius:5px;
+}
+
+.marker{
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:2px;
+    background:white;
+    left:50%;
+    z-index:5;
+}
+
+.marker:before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-5px;
+    width:12px;
+    height:12px;
+    background:white;
+    border-radius:50%;
+}
+
+/* TOOLS */
+
+.tools{
+    height:calc(100vh - 58px - 43vh - 48px - 25px - 105px);
+    min-height:125px;
+    background:#0d0e13;
+    display:flex;
+    align-items:center;
+    overflow-x:auto;
+    padding:10px 12px;
+    gap:24px;
+}
+
+.tool{
+    min-width:62px;
+    text-align:center;
+    color:#ddd;
+    font-size:11px;
+}
+
+.tool-icon{
+    height:48px;
+    width:48px;
+    margin:auto;
+    margin-bottom:7px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+    border-radius:10px;
+}
+
+.tool:active .tool-icon{
+    background:#8b5cf6;
+}
+
 </style>
 </head>
 
 <body>
 
-<header>
+<!-- TOP -->
+
+<div class="top">
+
+    <div class="close">×</div>
 
     <div class="logo">
         Vidy<span>Cut</span>
     </div>
 
-    <div class="settings">
-        ⚙️
-    </div>
+    <button class="export"
+            onclick="exportVideo()">
+        Export
+    </button>
 
-</header>
-
-
-<div class="main">
-
-    <div class="title">
-        Let's create 🎬
-    </div>
-
-    <div class="sub">
-        Edit videos. Create stories.
-    </div>
+</div>
 
 
-    <div class="project">
+<!-- VIDEO PREVIEW -->
 
-        <div class="project-icon">
+<div class="preview">
+
+    <div class="empty" id="empty">
+
+        <div class="empty-icon">
             🎬
         </div>
 
-        <h2>
-            New Project
-        </h2>
-
-        <p>
-            Start editing your video
-        </p>
-
-        <div class="create" onclick="openEditor()">
-            ＋ Create Project
+        <div>
+            Add a video to start editing
         </div>
+
+        <label class="add-video"
+               for="videoInput">
+            + Add Video
+        </label>
 
     </div>
 
+    <video id="video"
+           controls
+           style="display:none;">
+    </video>
 
-    <div class="section">
+</div>
 
-        <h2>Quick Tools</h2>
 
-        <div class="grid">
+<!-- CONTROLS -->
 
-            <div class="card">
-                <div class="card-icon">✂️</div>
-                <h3>Trim Video</h3>
-                <p>Cut unwanted parts</p>
-            </div>
+<div class="controls">
 
-            <div class="card">
-                <div class="card-icon">📝</div>
-                <h3>Add Text</h3>
-                <p>Add captions</p>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">🎵</div>
-                <h3>Music</h3>
-                <p>Add audio</p>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">✨</div>
-                <h3>Effects</h3>
-                <p>Add effects</p>
-            </div>
-
-        </div>
-
+    <div class="undo">
+        ↶
     </div>
 
+    <div class="play"
+         onclick="playVideo()">
+        ▶
+    </div>
 
-    <div class="section">
-
-        <h2>Creative Tools</h2>
-
-        <div class="grid">
-
-            <div class="card">
-                <div class="card-icon">🎨</div>
-                <h3>Filters</h3>
-                <p>Change your video style</p>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">⚡</div>
-                <h3>Speed</h3>
-                <p>Slow or fast motion</p>
-            </div>
-
-        </div>
-
+    <div class="undo">
+        ↷
     </div>
 
 </div>
 
 
-<div class="bottom">
+<!-- TIME -->
 
-    <div class="nav active">
-        <div class="nav-icon">⌂</div>
-        Home
+<div class="time">
+
+    <span id="current">
+        00:00
+    </span>
+
+    <span id="duration">
+        00:00
+    </span>
+
+</div>
+
+
+<!-- TIMELINE -->
+
+<div class="timeline">
+
+    <div class="marker"></div>
+
+    <div class="film"
+         id="film">
+
+        <div class="frame">VIDEO</div>
+        <div class="frame">VIDEO</div>
+        <div class="frame">VIDEO</div>
+        <div class="frame">VIDEO</div>
+        <div class="frame">VIDEO</div>
+        <div class="frame">VIDEO</div>
+        <div class="frame">VIDEO</div>
+        <div class="frame">VIDEO</div>
+
     </div>
 
-    <div class="nav" onclick="openEditor()">
-        <div class="nav-icon">＋</div>
-        Create
+    <div class="audio-line"></div>
+
+</div>
+
+
+<!-- EDITING TOOLS -->
+
+<div class="tools">
+
+    <div class="tool"
+         onclick="addVideo()">
+        <div class="tool-icon">＋</div>
+        Add
     </div>
 
-    <div class="nav">
-        <div class="nav-icon">✨</div>
+    <div class="tool"
+         onclick="tool('Trim')">
+        <div class="tool-icon">✂️</div>
+        Trim
+    </div>
+
+    <div class="tool"
+         onclick="tool('Audio')">
+        <div class="tool-icon">🎵</div>
+        Audio
+    </div>
+
+    <div class="tool"
+         onclick="tool('Text')">
+        <div class="tool-icon">T</div>
+        Text
+    </div>
+
+    <div class="tool"
+         onclick="tool('Overlay')">
+        <div class="tool-icon">▣</div>
+        Overlay
+    </div>
+
+    <div class="tool"
+         onclick="tool('Effects')">
+        <div class="tool-icon">✦</div>
         Effects
     </div>
 
-    <div class="nav">
-        <div class="nav-icon">⚙️</div>
-        Settings
+    <div class="tool"
+         onclick="tool('Filters')">
+        <div class="tool-icon">◐</div>
+        Filters
+    </div>
+
+    <div class="tool"
+         onclick="tool('Speed')">
+        <div class="tool-icon">⚡</div>
+        Speed
     </div>
 
 </div>
+
+
+<input type="file"
+       id="videoInput"
+       accept="video/*"
+       onchange="loadVideo(event)">
 
 
 <script>
 
-function openEditor(){
+function addVideo(){
 
-    window.location.assign("./editor.html");
+    document
+    .getElementById("videoInput")
+    .click();
+
+}
+
+
+function loadVideo(event){
+
+    const file =
+        event.target.files[0];
+
+    if(!file) return;
+
+    const video =
+        document.getElementById("video");
+
+    const empty =
+        document.getElementById("empty");
+
+    video.src =
+        URL.createObjectURL(file);
+
+    video.style.display =
+        "block";
+
+    empty.style.display =
+        "none";
+
+}
+
+
+function playVideo(){
+
+    const video =
+        document.getElementById("video");
+
+    if(video.paused){
+
+        video.play();
+
+    }else{
+
+        video.pause();
+
+    }
+
+}
+
+
+function tool(name){
+
+    alert(
+        name +
+        " tool आपण पुढच्या step मध्ये functional करू."
+    );
+
+}
+
+
+function exportVideo(){
+
+    alert(
+        "Export system पुढच्या step मध्ये बनवूया 🎬"
+    );
 
 }
 
