@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VidyCut Editor</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#08080c;
+    color:white;
+    min-height:100vh;
+}
+
+.topbar{
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 15px;
+    border-bottom:1px solid #27272f;
+}
+
+.back{
+    font-size:25px;
+    cursor:pointer;
+}
+
+.logo{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#8b5cf6;
+}
+
+.export{
+    background:#8b5cf6;
+    color:white;
+    border:0;
+    padding:9px 16px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.preview{
+    height:390px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#111116;
+    margin:15px;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+video{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.empty{
+    text-align:center;
+    color:#777783;
+}
+
+.empty-icon{
+    font-size:55px;
+    margin-bottom:10px;
+}
+
+.timeline-title{
+    padding:5px 18px;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.timeline{
+    height:100px;
+    margin:10px 15px;
+    background:#15151c;
+    border-radius:12px;
+    border:1px solid #292932;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#666672;
+}
+
+.tools{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:100px;
+    background:#111116;
+    border-top:1px solid #292932;
+    display:flex;
+    overflow-x:auto;
+    padding:12px 8px;
+    gap:8px;
+}
+
+.tool{
+    min-width:75px;
+    text-align:center;
+    color:#d4d4dc;
+    font-size:12px;
+}
+
+.tool-icon{
+    width:52px;
+    height:52px;
+    margin:auto;
+    margin-bottom:6px;
+    border-radius:13px;
+    background:#1c1c24;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+}
+
+.tool:active .tool-icon{
+    background:#8b5cf6;
+}
+
+input{
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+
+    <div class="back" onclick="goHome()">‹</div>
+
+    <div class="logo">
+        Vidy<span>Cut</span>
+    </div>
+
+    <button class="export" onclick="exportVideo()">
+        Export
+    </button>
+
+</div>
+
+
+<div class="preview" id="preview">
+
+    <div class="empty" id="empty">
+
+        <div class="empty-icon">🎬</div>
+
+        <p>Select a video to start editing</p>
+
+        <br>
+
+        <label for="videoInput"
+               style="color:#a78bfa;cursor:pointer;">
+            + Add Video
+        </label>
+
+    </div>
+
+    <video id="video" controls style="display:none;"></video>
+
+</div>
+
+
+<div class="timeline-title">
+    Timeline
+</div>
+
+<div class="timeline" id="timeline">
+    Your video timeline will appear here
+</div>
+
+
+<div class="tools">
+
+    <div class="tool" onclick="chooseVideo()">
+        <div class="tool-icon">📁</div>
+        Media
+    </div>
+
+    <div class="tool" onclick="showMessage('Trim tool coming next')">
+        <div class="tool-icon">✂️</div>
+        Trim
+    </div>
+
+    <div class="tool" onclick="showMessage('Text tool coming next')">
+        <div class="tool-icon">📝</div>
+        Text
+    </div>
+
+    <div class="tool" onclick="showMessage('Music tool coming next')">
+        <div class="tool-icon">🎵</div>
+        Music
+    </div>
+
+    <div class="tool" onclick="showMessage('Effects coming next')">
+        <div class="tool-icon">✨</div>
+        Effects
+    </div>
+
+    <div class="tool" onclick="showMessage('Filter tool coming next')">
+        <div class="tool-icon">🎨</div>
+        Filters
+    </div>
+
+    <div class="tool" onclick="showMessage('Speed control coming next')">
+        <div class="tool-icon">⚡</div>
+        Speed
+    </div>
+
+</div>
+
+
+<input type="file"
+       id="videoInput"
+       accept="video/*"
+       onchange="loadVideo(event)">
+
+
+<script>
+
+function chooseVideo(){
+    document.getElementById("videoInput").click();
+}
+
+function loadVideo(event){
+
+    const file = event.target.files[0];
+
+    if(!file) return;
+
+    const video = document.getElementById("video");
+    const empty = document.getElementById("empty");
+    const timeline = document.getElementById("timeline");
+
+    video.src = URL.createObjectURL(file);
+
+    video.style.display = "block";
+    empty.style.display = "none";
+
+    timeline.innerHTML =
+        "🎬 " + file.name;
+
+}
+
+function goHome(){
+    window.location.href = "index.html";
+}
+
+function showMessage(message){
+    alert(message);
+}
+
+function exportVideo(){
+    alert("Export feature आपण पुढच्या step मध्ये बनवू 🚀");
+}
+
+</script>
+
+</body>
+</html>
