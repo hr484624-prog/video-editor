@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VidyCut</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#0b0b0f;
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    border-bottom:1px solid #25252d;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#8b5cf6;
+}
+
+.profile{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#8b5cf6;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.container{
+    padding:25px 18px 100px;
+}
+
+h1{
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.subtitle{
+    color:#9b9ba5;
+    margin-bottom:25px;
+}
+
+.create{
+    background:linear-gradient(135deg,#8b5cf6,#6366f1);
+    border-radius:18px;
+    padding:25px;
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.create-icon{
+    font-size:45px;
+    margin-bottom:10px;
+}
+
+.create h2{
+    margin-bottom:8px;
+}
+
+.create p{
+    color:#e4e4e7;
+    font-size:14px;
+    margin-bottom:18px;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+}
+
+.new-btn{
+    background:white;
+    color:#111;
+    padding:13px 25px;
+    border-radius:30px;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.section-title h2{
+    font-size:21px;
+}
+
+.see{
+    color:#9b8cff;
+    font-size:14px;
+}
+
+.tools{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+}
+
+.tool{
+    background:#17171e;
+    border:1px solid #272730;
+    border-radius:16px;
+    padding:20px 15px;
+    min-height:125px;
+}
+
+.tool-icon{
+    font-size:32px;
+    margin-bottom:12px;
+}
+
+.tool h3{
+    font-size:16px;
+    margin-bottom:5px;
+}
+
+.tool p{
+    color:#858590;
+    font-size:12px;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:75px;
+    background:#111116;
+    border-top:1px solid #292932;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+}
+
+.nav-item{
+    text-align:center;
+    color:#858590;
+    font-size:12px;
+}
+
+.nav-icon{
+    font-size:24px;
+    margin-bottom:4px;
+}
+
+.nav-item.active{
+    color:#a78bfa;
+}
+
+input{
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Vidy<span>Cut</span></div>
+    <div class="profile">V</div>
+</header>
+
+<div class="container">
+
+    <h1>Let's create 🎬</h1>
+    <p class="subtitle">Turn your ideas into amazing videos.</p>
+
+    <div class="create">
+
+        <div class="create-icon">＋</div>
+
+        <h2>New Project</h2>
+
+        <p>Start editing your photos and videos</p>
+
+        <label for="videoUpload" class="new-btn">
+            Create Project
+        </label>
+
+        <input type="file"
+               id="videoUpload"
+               accept="video/*">
+
+    </div>
+
+    <div class="section-title">
+        <h2>Quick Tools</h2>
+        <div class="see">See all</div>
+    </div>
+
+    <div class="tools">
+
+        <div class="tool">
+            <div class="tool-icon">✂️</div>
+            <h3>Trim Video</h3>
+            <p>Cut your video easily</p>
+        </div>
+
+        <div class="tool">
+            <div class="tool-icon">📝</div>
+            <h3>Add Text</h3>
+            <p>Create beautiful captions</p>
+        </div>
+
+        <div class="tool">
+            <div class="tool-icon">🎵</div>
+            <h3>Add Music</h3>
+            <p>Add audio to your video</p>
+        </div>
+
+        <div class="tool">
+            <div class="tool-icon">✨</div>
+            <h3>Effects</h3>
+            <p>Make videos creative</p>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="bottom-nav">
+
+    <div class="nav-item active">
+        <div class="nav-icon">⌂</div>
+        Home
+    </div>
+
+    <div class="nav-item">
+        <div class="nav-icon">🎬</div>
+        Projects
+    </div>
+
+    <div class="nav-item">
+        <div class="nav-icon">✨</div>
+        Effects
+    </div>
+
+    <div class="nav-item">
+        <div class="nav-icon">⚙️</div>
+        Settings
+    </div>
+
+</div>
+
+</body>
+</html>
