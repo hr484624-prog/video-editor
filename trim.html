@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Trim</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    background:#0d0e11;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.topbar{
+    height:58px;
+    background:#17181c;
+    border-bottom:1px solid #292b31;
+    display:flex;
+    align-items:center;
+    padding:0 18px;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#a855f7;
+}
+
+.back{
+    margin-left:auto;
+    color:#aaa;
+    text-decoration:none;
+}
+
+.back:hover{
+    color:#fff;
+}
+
+.main{
+    display:flex;
+    min-height:calc(100vh - 58px);
+}
+
+.sidebar{
+    width:190px;
+    background:#15161a;
+    border-right:1px solid #292b31;
+    padding:10px 7px;
+}
+
+.menu{
+    display:block;
+    color:#aaa;
+    text-decoration:none;
+    padding:12px 10px;
+    border-radius:8px;
+    margin-bottom:3px;
+    font-size:14px;
+}
+
+.menu:hover,
+.menu.active{
+    background:#29202f;
+    color:#fff;
+}
+
+.content{
+    flex:1;
+    padding:25px;
+    min-width:0;
+}
+
+h1{
+    font-size:27px;
+    margin-bottom:7px;
+}
+
+.subtitle{
+    color:#777;
+    margin-bottom:22px;
+}
+
+
+/* VIDEO */
+
+.editor{
+    background:#15161a;
+    border:1px solid #292b31;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.preview{
+    height:390px;
+    background:#08090b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#video{
+    max-width:90%;
+    max-height:90%;
+    display:none;
+}
+
+.empty{
+    color:#666;
+    text-align:center;
+}
+
+.empty div{
+    font-size:45px;
+    margin-bottom:10px;
+}
+
+
+/* CONTROLS */
+
+.controls{
+    padding:18px;
+}
+
+.upload{
+    background:#8b5cf6;
+    border:none;
+    color:#fff;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.time-row{
+    display:flex;
+    gap:12px;
+    margin-top:18px;
+}
+
+.time-box{
+    flex:1;
+}
+
+.time-box label{
+    display:block;
+    color:#888;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.time-box input{
+    width:100%;
+    background:#0d0e11;
+    color:white;
+    border:1px solid #353740;
+    padding:10px;
+    border-radius:7px;
+}
+
+
+/* RANGE */
+
+.range-area{
+    margin-top:20px;
+}
+
+.range-area label{
+    color:#888;
+    font-size:12px;
+}
+
+input[type="range"]{
+    width:100%;
+    margin-top:12px;
+    accent-color:#8b5cf6;
+}
+
+
+/* TIMELINE */
+
+.timeline{
+    margin-top:20px;
+    height:100px;
+    background:#0b0c0f;
+    border:1px solid #292b31;
+    border-radius:8px;
+    position:relative;
+    padding:15px;
+}
+
+.timeline-track{
+    height:50px;
+    background:#24262d;
+    border-radius:6px;
+    position:relative;
+    overflow:hidden;
+}
+
+.selected{
+    position:absolute;
+    left:10%;
+    right:10%;
+    height:100%;
+    background:#7137c8;
+    border-radius:6px;
+}
+
+.handle{
+    position:absolute;
+    top:0;
+    width:7px;
+    height:100%;
+    background:#fff;
+    cursor:ew-resize;
+}
+
+.left-handle{
+    left:10%;
+}
+
+.right-handle{
+    right:10%;
+}
+
+
+/* BUTTONS */
+
+.actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:18px;
+}
+
+.btn{
+    border:1px solid #383a43;
+    background:#23252b;
+    color:white;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.btn.primary{
+    background:#8b5cf6;
+    border-color:#8b5cf6;
+}
+
+.btn:hover{
+    opacity:.85;
+}
+
+.message{
+    color:#8b5cf6;
+    margin-top:12px;
+    font-size:13px;
+}
+
+
+@media(max-width:700px){
+
+    .sidebar{
+        width:62px;
+    }
+
+    .menu{
+        font-size:0;
+        text-align:center;
+    }
+
+    .menu::first-letter{
+        font-size:20px;
+    }
+
+    .content{
+        padding:15px;
+    }
+
+    .preview{
+        height:280px;
+    }
+
+    .time-row{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+
+<header class="topbar">
+
+    <div class="logo">
+        ✂️ Gyan<span>Cut</span>
+    </div>
+
+    <a class="back" href="index.html">
+        ← Editor
+    </a>
+
+</header>
+
+
+<div class="main">
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <a class="menu" href="index.html">
+        🎬 Editor
+    </a>
+
+    <a class="menu" href="media.html">
+        📁 Media
+    </a>
+
+    <a class="menu active" href="trim.html">
+        ✂️ Trim
+    </a>
+
+    <a class="menu" href="text.html">
+        📝 Text
+    </a>
+
+    <a class="menu" href="audio.html">
+        🎵 Audio
+    </a>
+
+    <a class="menu" href="filters.html">
+        🎨 Filters
+    </a>
+
+    <a class="menu" href="speed.html">
+        ⚡ Speed
+    </a>
+
+    <a class="menu" href="transform.html">
+        🔄 Transform
+    </a>
+
+    <a class="menu" href="effects.html">
+        ✨ Effects
+    </a>
+
+    <a class="menu" href="stickers.html">
+        ⭐ Stickers
+    </a>
+
+    <a class="menu" href="timeline.html">
+        🎞️ Timeline
+    </a>
+
+    <a class="menu" href="preview.html">
+        👁️ Preview
+    </a>
+
+    <a class="menu" href="export.html">
+        📤 Export
+    </a>
+
+    <a class="menu" href="settings.html">
+        ⚙️ Settings
+    </a>
+
+</aside>
+
+
+<!-- CONTENT -->
+
+<section class="content">
+
+    <h1>✂️ Trim Video</h1>
+
+    <p class="subtitle">
+        Select the part of the video you want to keep.
+    </p>
+
+
+    <div class="editor">
+
+
+        <!-- PREVIEW -->
+
+        <div class="preview">
+
+            <video
+                id="video"
+                controls
+                playsinline>
+            </video>
+
+            <div
+                class="empty"
+                id="empty">
+
+                <div>🎬</div>
+
+                Import a video to start trimming
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTROLS -->
+
+        <div class="controls">
+
+
+            <input
+                type="file"
+                id="file"
+                accept="video/*"
+                hidden
+            >
+
+            <button
+                class="upload"
+                onclick="document.getElementById('file').click()">
+
+                ＋ Import Video
+
+            </button>
+
+
+            <div class="time-row">
+
+
+                <div class="time-box">
+
+                    <label>
+                        START TIME
+                    </label>
+
+                    <input
+                        id="start"
+                        type="number"
+                        min="0"
+                        value="0"
+                        step="0.1">
+
+                </div>
+
+
+                <div class="time-box">
+
+                    <label>
+                        END TIME
+                    </label>
+
+                    <input
+                        id="end"
+                        type="number"
+                        min="0"
+                        value="0"
+                        step="0.1">
+
+                </div>
+
+
+                <div class="time-box">
+
+                    <label>
+                        DURATION
+                    </label>
+
+                    <input
+                        id="duration"
+                        type="text"
+                        value="00:00"
+                        readonly>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- RANGE -->
+
+            <div class="range-area">
+
+                <label>
+                    TRIM RANGE
+                </label>
+
+                <input
+                    id="range"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="0">
+
+            </div>
+
+
+            <!-- TIMELINE -->
+
+            <div class="timeline">
+
+                <div class="timeline-track">
+
+                    <div
+                        class="selected"
+                        id="selected">
+
+                    </div>
+
+                    <div
+                        class="handle left-handle">
+
+                    </div>
+
+                    <div
+                        class="handle right-handle">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button
+                    class="btn"
+                    onclick="resetTrim()">
+
+                    Reset
+
+                </button>
+
+                <button
+                    class="btn primary"
+                    onclick="applyTrim()">
+
+                    Apply Trim
+
+                </button>
+
+            </div>
+
+
+            <div
+                class="message"
+                id="message">
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<script>
+
+const fileInput =
+    document.getElementById("file");
+
+const video =
+    document.getElementById("video");
+
+const empty =
+    document.getElementById("empty");
+
+const startInput =
+    document.getElementById("start");
+
+const endInput =
+    document.getElementById("end");
+
+const durationInput =
+    document.getElementById("duration");
+
+const range =
+    document.getElementById("range");
+
+const selected =
+    document.getElementById("selected");
+
+const message =
+    document.getElementById("message");
+
+
+let videoDuration = 0;
+
+
+fileInput.addEventListener(
+    "change",
+    function(){
+
+        const file =
+            this.files[0];
+
+        if(!file){
+            return;
+        }
+
+        const url =
+            URL.createObjectURL(file);
+
+        video.src = url;
+
+        video.style.display =
+            "block";
+
+        empty.style.display =
+            "none";
+
+        video.onloadedmetadata =
+            function(){
+
+                videoDuration =
+                    video.duration;
+
+                startInput.value =
+                    0;
+
+                endInput.value =
+                    videoDuration.toFixed(1);
+
+                durationInput.value =
+                    formatTime(videoDuration);
+
+                range.max =
+                    videoDuration;
+
+                range.value =
+                    0;
+
+                localStorage.setItem(
+                    "trimVideo",
+                    url
+                );
+
+            };
+
+    }
+);
+
+
+range.addEventListener(
+    "input",
+    function(){
+
+        const start =
+            Number(this.value);
+
+        startInput.value =
+            start.toFixed(1);
+
+        updateSelection();
+
+    }
+);
+
+
+startInput.addEventListener(
+    "input",
+    updateSelection
+);
+
+endInput.addEventListener(
+    "input",
+    updateSelection
+);
+
+
+function updateSelection(){
+
+    if(!videoDuration){
+        return;
+    }
+
+    let start =
+        Number(startInput.value);
+
+    let end =
+        Number(endInput.value);
+
+    if(start < 0){
+        start = 0;
+    }
+
+    if(end > videoDuration){
+        end = videoDuration;
+    }
+
+    if(end < start){
+        end = start;
+    }
+
+    const left =
+        (start / videoDuration) * 100;
+
+    const right =
+        100 -
+        (end / videoDuration) * 100;
+
+    selected.style.left =
+        left + "%";
+
+    selected.style.right =
+        right + "%";
+
+    range.value =
+        start;
+
+}
+
+
+function applyTrim(){
+
+    const start =
+        Number(startInput.value);
+
+    const end =
+        Number(endInput.value);
+
+    if(!videoDuration){
+
+        message.textContent =
+            "Please import a video first.";
+
+        return;
+
+    }
+
+    if(end <= start){
+
+        message.textContent =
+            "End time must be greater than start time.";
+
+        return;
+
+    }
+
+    localStorage.setItem(
+        "trimStart",
+        start
+    );
+
+    localStorage.setItem(
+        "trimEnd",
+        end
+    );
+
+    message.textContent =
+        "✓ Trim range saved to your project.";
+
+}
+
+
+function resetTrim(){
+
+    if(!videoDuration){
+        return;
+    }
+
+    startInput.value =
+        0;
+
+    endInput.value =
+        videoDuration.toFixed(1);
+
+    range.value =
+        0;
+
+    updateSelection();
+
+    message.textContent =
+        "Trim reset.";
+
+}
+
+
+function formatTime(seconds){
+
+    const min =
+        Math.floor(seconds / 60);
+
+    const sec =
+        Math.floor(seconds % 60);
+
+    return String(min).padStart(2,"0")
+        + ":" +
+        String(sec).padStart(2,"0");
+
+}
+
+</script>
+
+</body>
+</html>
