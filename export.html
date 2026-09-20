@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Export</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0d0e11;
+  color:#fff;
+  overflow:hidden;
+}
+
+/* TOPBAR */
+.topbar{
+  height:58px;
+  background:#17181c;
+  border-bottom:1px solid #292b31;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:bold;
+}
+
+.project{
+  color:#aaa;
+  font-size:14px;
+}
+
+.top-actions{
+  display:flex;
+  gap:8px;
+}
+
+button{
+  border:0;
+  background:#24262d;
+  color:#fff;
+  padding:9px 15px;
+  border-radius:7px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#34363d;
+}
+
+.primary{
+  background:#8b5cf6;
+}
+
+.primary:hover{
+  background:#7c3aed;
+}
+
+/* LAYOUT */
+.layout{
+  display:flex;
+  height:calc(100vh - 58px);
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:210px;
+  background:#15161a;
+  border-right:1px solid #292b31;
+  padding:10px 8px;
+}
+
+.side-title{
+  color:#777;
+  font-size:11px;
+  padding:10px;
+  text-transform:uppercase;
+}
+
+.nav{
+  display:block;
+  text-decoration:none;
+  color:#b8b8bd;
+  padding:11px 12px;
+  margin-bottom:3px;
+  border-radius:7px;
+  font-size:14px;
+}
+
+.nav:hover{
+  background:#22242a;
+  color:#fff;
+}
+
+.nav.active{
+  background:#2a213d;
+  color:#c4a7ff;
+}
+
+/* MAIN */
+.main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  overflow:auto;
+}
+
+/* EXPORT AREA */
+.export-area{
+  width:min(1050px,94%);
+  margin:auto;
+  padding:30px 0 50px;
+}
+
+/* HEADER */
+.page-header{
+  margin-bottom:25px;
+}
+
+.page-header h1{
+  font-size:27px;
+  margin-bottom:8px;
+}
+
+.page-header p{
+  color:#888;
+  font-size:14px;
+}
+
+/* GRID */
+.export-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+/* CARD */
+.card{
+  background:#17191e;
+  border:1px solid #292b31;
+  border-radius:12px;
+  padding:20px;
+}
+
+.card-title{
+  font-size:16px;
+  font-weight:bold;
+  margin-bottom:18px;
+}
+
+.field{
+  margin-bottom:17px;
+}
+
+.field label{
+  display:block;
+  color:#aaa;
+  font-size:12px;
+  margin-bottom:8px;
+}
+
+select,
+input[type="text"]{
+  width:100%;
+  padding:11px;
+  border:1px solid #34363d;
+  border-radius:7px;
+  background:#22242a;
+  color:#fff;
+  outline:none;
+}
+
+select:focus,
+input:focus{
+  border-color:#8b5cf6;
+}
+
+/* RADIO */
+.options{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+
+.option{
+  position:relative;
+}
+
+.option input{
+  position:absolute;
+  opacity:0;
+}
+
+.option label{
+  display:block;
+  padding:11px;
+  text-align:center;
+  background:#22242a;
+  border:1px solid #34363d;
+  border-radius:7px;
+  cursor:pointer;
+  color:#bbb;
+}
+
+.option input:checked + label{
+  background:#2a213d;
+  border-color:#8b5cf6;
+  color:#c9b5ff;
+}
+
+/* QUALITY */
+.quality-value{
+  color:#a98aff;
+  float:right;
+}
+
+input[type="range"]{
+  width:100%;
+  accent-color:#8b5cf6;
+}
+
+/* INFO */
+.info-row{
+  display:flex;
+  justify-content:space-between;
+  padding:11px 0;
+  border-bottom:1px solid #292b31;
+  font-size:13px;
+}
+
+.info-row:last-child{
+  border-bottom:0;
+}
+
+.info-label{
+  color:#888;
+}
+
+.info-value{
+  color:#ddd;
+  text-align:right;
+  max-width:60%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* EXPORT BUTTON */
+.export-button{
+  width:100%;
+  padding:14px;
+  margin-top:20px;
+  background:#8b5cf6;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.export-button:hover{
+  background:#7c3aed;
+}
+
+/* PROGRESS */
+.progress-card{
+  margin-top:18px;
+  display:none;
+}
+
+.progress-title{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:12px;
+  font-size:13px;
+}
+
+.progress-track{
+  width:100%;
+  height:9px;
+  background:#292b31;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:#8b5cf6;
+  transition:width .2s;
+}
+
+.status{
+  color:#888;
+  font-size:12px;
+  margin-top:10px;
+}
+
+/* DONE */
+.done{
+  display:none;
+  text-align:center;
+  padding:20px;
+}
+
+.done-icon{
+  font-size:45px;
+  margin-bottom:10px;
+}
+
+.done h2{
+  margin-bottom:8px;
+}
+
+.done p{
+  color:#888;
+  font-size:13px;
+}
+
+/* RESPONSIVE */
+@media(max-width:850px){
+
+  .sidebar{
+    width:62px;
+    padding:8px 5px;
+  }
+
+  .side-title{
+    display:none;
+  }
+
+  .nav{
+    font-size:0;
+    text-align:center;
+    padding:12px 5px;
+  }
+
+  .project{
+    display:none;
+  }
+
+  .export-grid{
+    grid-template-columns:1fr;
+  }
+
+  .export-area{
+    padding:20px 0 40px;
+  }
+
+}
+
+@media(max-width:500px){
+
+  .page-header h1{
+    font-size:22px;
+  }
+
+  .options{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+
+  <div class="logo">
+    ✂️ GyanCut
+  </div>
+
+  <div class="project">
+    Export
+  </div>
+
+  <div class="top-actions">
+
+    <button onclick="goEditor()">
+      ← Editor
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+  <div class="side-title">
+    Editor
+  </div>
+
+  <a class="nav" href="index.html">🏠</a>
+  <a class="nav" href="media.html">🖼️</a>
+  <a class="nav" href="trim.html">✂️</a>
+  <a class="nav" href="text.html">T</a>
+  <a class="nav" href="audio.html">🎵</a>
+  <a class="nav" href="filters.html">🎨</a>
+  <a class="nav" href="speed.html">⚡</a>
+  <a class="nav" href="transform.html">↔️</a>
+  <a class="nav" href="effects.html">✨</a>
+  <a class="nav" href="stickers.html">😀</a>
+  <a class="nav" href="timeline.html">🎞️</a>
+  <a class="nav" href="preview.html">▶️</a>
+  <a class="nav active" href="export.html">📤</a>
+  <a class="nav" href="settings.html">⚙️</a>
+
+</aside>
+
+
+<!-- MAIN -->
+<main class="main">
+
+<div class="export-area">
+
+  <div class="page-header">
+
+    <h1>Export Video</h1>
+
+    <p>
+      Choose your export settings and create your final video.
+    </p>
+
+  </div>
+
+
+  <div class="export-grid">
+
+    <!-- LEFT -->
+    <div class="card">
+
+      <div class="card-title">
+        ⚙️ Export Settings
+      </div>
+
+
+      <!-- FORMAT -->
+      <div class="field">
+
+        <label>
+          Format
+        </label>
+
+        <select id="format">
+
+          <option value="mp4">
+            MP4 Video
+          </option>
+
+          <option value="webm">
+            WebM Video
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- RESOLUTION -->
+      <div class="field">
+
+        <label>
+          Resolution
+        </label>
+
+        <select id="resolution">
+
+          <option value="original">
+            Original
+          </option>
+
+          <option value="1080">
+            1080p Full HD
+          </option>
+
+          <option value="720">
+            720p HD
+          </option>
+
+          <option value="480">
+            480p
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- FPS -->
+      <div class="field">
+
+        <label>
+          Frame Rate
+        </label>
+
+        <select id="fps">
+
+          <option value="24">
+            24 FPS
+          </option>
+
+          <option value="30" selected>
+            30 FPS
+          </option>
+
+          <option value="60">
+            60 FPS
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- QUALITY -->
+      <div class="field">
+
+        <label>
+
+          Quality
+
+          <span
+            class="quality-value"
+            id="qualityValue"
+          >
+            80%
+          </span>
+
+        </label>
+
+        <input
+          type="range"
+          id="quality"
+          min="10"
+          max="100"
+          value="80"
+        >
+
+      </div>
+
+
+      <!-- FILE NAME -->
+      <div class="field">
+
+        <label>
+          File Name
+        </label>
+
+        <input
+          type="text"
+          id="fileName"
+          value="GyanCut_Video"
+        >
+
+      </div>
+
+
+      <button
+        class="export-button"
+        onclick="startExport()"
+      >
+        📤 Export Video
+      </button>
+
+    </div>
+
+
+    <!-- RIGHT -->
+    <div class="card">
+
+      <div class="card-title">
+        📋 Project Information
+      </div>
+
+
+      <div class="info-row">
+
+        <span class="info-label">
+          Media
+        </span>
+
+        <span
+          class="info-value"
+          id="mediaInfo"
+        >
+          No video
+        </span>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <span class="info-label">
+          Duration
+        </span>
+
+        <span
+          class="info-value"
+          id="durationInfo"
+        >
+          00:00
+        </span>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <span class="info-label">
+          Resolution
+        </span>
+
+        <span
+          class="info-value"
+          id="resolutionInfo"
+        >
+          Original
+        </span>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <span class="info-label">
+          Frame Rate
+        </span>
+
+        <span
+          class="info-value"
+          id="fpsInfo"
+        >
+          30 FPS
+        </span>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <span class="info-label">
+          Format
+        </span>
+
+        <span
+          class="info-value"
+          id="formatInfo"
+        >
+          MP4
+        </span>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <span class="info-label">
+          Speed
+        </span>
+
+        <span
+          class="info-value"
+          id="speedInfo"
+        >
+          1x
+        </span>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <span class="info-label">
+          Filter
+        </span>
+
+        <span
+          class="info-value"
+          id="filterInfo"
+        >
+          Normal
+        </span>
+
+      </div>
+
+
+      <!-- PROGRESS -->
+      <div
+        class="progress-card"
+        id="progressCard"
+      >
+
+        <div class="progress-title">
+
+          <span>
+            Exporting...
+          </span>
+
+          <span id="progressPercent">
+            0%
+          </span>
+
+        </div>
+
+
+        <div class="progress-track">
+
+          <div
+            class="progress-bar"
+            id="progressBar"
+          ></div>
+
+        </div>
+
+
+        <div
+          class="status"
+          id="status"
+        >
+          Preparing video...
+        </div>
+
+      </div>
+
+
+      <!-- DONE -->
+      <div
+        class="done"
+        id="done"
+      >
+
+        <div class="done-icon">
+          ✅
+        </div>
+
+        <h2>
+          Export Complete
+        </h2>
+
+        <p>
+          Your video is ready.
+        </p>
+
+        <button
+          class="export-button"
+          onclick="downloadVideo()"
+        >
+          ⬇️ Download Video
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</main>
+
+</div>
+
+
+<script>
+
+/* ELEMENTS */
+
+const quality =
+document.getElementById("quality");
+
+const qualityValue =
+document.getElementById("qualityValue");
+
+const resolution =
+document.getElementById("resolution");
+
+const fps =
+document.getElementById("fps");
+
+const format =
+document.getElementById("format");
+
+
+/* QUALITY */
+
+quality.addEventListener(
+  "input",
+  function(){
+
+    qualityValue.textContent =
+      quality.value + "%";
+
+  }
+);
+
+
+/* PROJECT DATA */
+
+const savedURL =
+localStorage.getItem("mediaURL");
+
+const savedName =
+localStorage.getItem("mediaName");
+
+const savedSpeed =
+Number(
+  localStorage.getItem("videoSpeed")
+) || 1;
+
+const savedFilter =
+localStorage.getItem("filter") ||
+"Normal";
+
+
+if(savedName){
+
+  document.getElementById(
+    "mediaInfo"
+  ).textContent =
+    savedName;
+
+}
+
+
+/* VIDEO DURATION */
+
+if(savedURL){
+
+  const tempVideo =
+    document.createElement("video");
+
+  tempVideo.src =
+    savedURL;
+
+  tempVideo.addEventListener(
+    "loadedmetadata",
+    function(){
+
+      document.getElementById(
+        "durationInfo"
+      ).textContent =
+        formatTime(tempVideo.duration);
+
+    }
+  );
+
+}
+
+
+function formatTime(seconds){
+
+  if(!seconds || isNaN(seconds)){
+    return "00:00";
+  }
+
+  const minutes =
+    Math.floor(seconds / 60)
+    .toString()
+    .padStart(2,"0");
+
+  const sec =
+    Math.floor(seconds % 60)
+    .toString()
+    .padStart(2,"0");
+
+  return minutes + ":" + sec;
+
+}
+
+
+/* INFO UPDATES */
+
+resolution.addEventListener(
+  "change",
+  updateInfo
+);
+
+fps.addEventListener(
+  "change",
+  updateInfo
+);
+
+format.addEventListener(
+  "change",
+  updateInfo
+);
+
+
+function updateInfo(){
+
+  document.getElementById(
+    "resolutionInfo"
+  ).textContent =
+    resolution.options[
+      resolution.selectedIndex
+    ].text;
+
+  document.getElementById(
+    "fpsInfo"
+  ).textContent =
+    fps.value + " FPS";
+
+  document.getElementById(
+    "formatInfo"
+  ).textContent =
+    format.value.toUpperCase();
+
+}
+
+
+document.getElementById(
+  "speedInfo"
+).textContent =
+  savedSpeed + "x";
+
+
+document.getElementById(
+  "filterInfo"
+).textContent =
+  savedFilter;
+
+
+/* EXPORT */
+
+function startExport(){
+
+  if(!savedURL){
+
+    alert(
+      "Please import a video before exporting."
+    );
+
+    return;
+
+  }
+
+
+  const progressCard =
+    document.getElementById(
+      "progressCard"
+    );
+
+  const progressBar =
+    document.getElementById(
+      "progressBar"
+    );
+
+  const progressPercent =
+    document.getElementById(
+      "progressPercent"
+    );
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+
+  progressCard.style.display =
+    "block";
+
+
+  let progress = 0;
+
+
+  const messages = [
+
+    "Preparing video...",
+
+    "Reading project settings...",
+
+    "Processing timeline...",
+
+    "Applying video settings...",
+
+    "Preparing final file...",
+
+    "Almost finished..."
+
+  ];
+
+
+  const interval =
+    setInterval(function(){
+
+      progress +=
+        Math.floor(
+          Math.random() * 8
+        ) + 3;
+
+
+      if(progress >= 100){
+
+        progress = 100;
+
+        clearInterval(interval);
+
+        status.textContent =
+          "Export complete.";
+
+        document.getElementById(
+          "done"
+        ).style.display =
+          "block";
+
+      }else{
+
+        status.textContent =
+          messages[
+            Math.min(
+              Math.floor(progress / 20),
+              messages.length - 1
+            )
+          ];
+
+      }
+
+
+      progressBar.style.width =
+        progress + "%";
+
+      progressPercent.textContent =
+        progress + "%";
+
+    },300);
+
+}
+
+
+/* DOWNLOAD */
+
+function downloadVideo(){
+
+  if(!savedURL){
+
+    alert(
+      "No video available."
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Current version downloads the
+    imported source video.
+
+    Real MP4 rendering of effects,
+    text, stickers, filters and audio
+    can be added later with a browser
+    video-processing engine.
+  */
+
+  const link =
+    document.createElement("a");
+
+  link.href =
+    savedURL;
+
+  const name =
+    document.getElementById(
+      "fileName"
+    ).value.trim() ||
+    "GyanCut_Video";
+
+  link.download =
+    name + "." + format.value;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  link.remove();
+
+}
+
+
+/* NAVIGATION */
+
+function goEditor(){
+
+  window.location.href =
+    "index.html";
+
+}
+
+</script>
+
+</body>
+</html>
