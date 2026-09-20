@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Audio</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    background:#0d0e11;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.topbar{
+    height:58px;
+    background:#17181c;
+    border-bottom:1px solid #292b31;
+    display:flex;
+    align-items:center;
+    padding:0 18px;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#a855f7;
+}
+
+.back{
+    margin-left:auto;
+    color:#aaa;
+    text-decoration:none;
+}
+
+.main{
+    display:flex;
+    min-height:calc(100vh - 58px);
+}
+
+.sidebar{
+    width:190px;
+    background:#15161a;
+    border-right:1px solid #292b31;
+    padding:10px 7px;
+}
+
+.menu{
+    display:block;
+    color:#aaa;
+    text-decoration:none;
+    padding:12px 10px;
+    border-radius:8px;
+    margin-bottom:3px;
+    font-size:14px;
+}
+
+.menu:hover,
+.menu.active{
+    background:#29202f;
+    color:#fff;
+}
+
+.content{
+    flex:1;
+    padding:25px;
+    min-width:0;
+}
+
+h1{
+    font-size:27px;
+    margin-bottom:7px;
+}
+
+.subtitle{
+    color:#777;
+    margin-bottom:22px;
+}
+
+.audio-editor{
+    background:#15161a;
+    border:1px solid #292b31;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.audio-top{
+    padding:25px;
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:25px;
+}
+
+.music-box{
+    min-height:260px;
+    border:2px dashed #353740;
+    border-radius:12px;
+    background:#101114;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
+}
+
+.music-icon{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+.music-box p{
+    color:#777;
+    font-size:14px;
+}
+
+.import-btn{
+    margin-top:18px;
+    background:#8b5cf6;
+    color:#fff;
+    border:0;
+    border-radius:8px;
+    padding:11px 20px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.controls{
+    background:#17181c;
+    border:1px solid #292b31;
+    border-radius:10px;
+    padding:18px;
+}
+
+.controls h2{
+    font-size:17px;
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    color:#999;
+    font-size:12px;
+    margin:16px 0 7px;
+}
+
+input[type="range"]{
+    width:100%;
+    accent-color:#8b5cf6;
+}
+
+select{
+    width:100%;
+    background:#0d0e11;
+    color:#fff;
+    border:1px solid #393b44;
+    border-radius:7px;
+    padding:9px;
+}
+
+.value{
+    float:right;
+    color:#8b5cf6;
+}
+
+.timeline-area{
+    border-top:1px solid #292b31;
+    padding:20px;
+}
+
+.timeline-title{
+    color:#888;
+    font-size:11px;
+    margin-bottom:8px;
+}
+
+.timeline{
+    height:80px;
+    background:#0b0c0f;
+    border:1px solid #292b31;
+    border-radius:7px;
+    padding:8px;
+    position:relative;
+}
+
+.audio-clip{
+    height:100%;
+    width:65%;
+    min-width:180px;
+    border-radius:6px;
+    background:#176b64;
+    padding:20px 12px;
+    font-size:12px;
+    overflow:hidden;
+}
+
+.wave{
+    display:flex;
+    gap:3px;
+    align-items:center;
+    height:15px;
+    margin-top:7px;
+}
+
+.wave i{
+    width:3px;
+    background:#9ff5e9;
+    border-radius:2px;
+}
+
+.actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:18px;
+}
+
+.btn{
+    background:#24262d;
+    color:#fff;
+    border:1px solid #383a43;
+    border-radius:7px;
+    padding:10px 18px;
+    cursor:pointer;
+}
+
+.btn.primary{
+    background:#8b5cf6;
+    border-color:#8b5cf6;
+}
+
+.message{
+    color:#8b5cf6;
+    font-size:13px;
+    margin-top:12px;
+}
+
+@media(max-width:800px){
+
+    .sidebar{
+        width:62px;
+    }
+
+    .menu{
+        font-size:0;
+        text-align:center;
+    }
+
+    .menu::first-letter{
+        font-size:20px;
+    }
+
+    .content{
+        padding:14px;
+    }
+
+    .audio-top{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="logo">
+        ✂️ Gyan<span>Cut</span>
+    </div>
+
+    <a class="back" href="index.html">
+        ← Editor
+    </a>
+
+</header>
+
+
+<div class="main">
+
+<aside class="sidebar">
+
+    <a class="menu" href="index.html">🎬 Editor</a>
+    <a class="menu" href="media.html">📁 Media</a>
+    <a class="menu" href="trim.html">✂️ Trim</a>
+    <a class="menu" href="text.html">📝 Text</a>
+    <a class="menu active" href="audio.html">🎵 Audio</a>
+    <a class="menu" href="filters.html">🎨 Filters</a>
+    <a class="menu" href="speed.html">⚡ Speed</a>
+    <a class="menu" href="transform.html">🔄 Transform</a>
+    <a class="menu" href="effects.html">✨ Effects</a>
+    <a class="menu" href="stickers.html">⭐ Stickers</a>
+    <a class="menu" href="timeline.html">🎞️ Timeline</a>
+    <a class="menu" href="preview.html">👁️ Preview</a>
+    <a class="menu" href="export.html">📤 Export</a>
+    <a class="menu" href="settings.html">⚙️ Settings</a>
+
+</aside>
+
+
+<section class="content">
+
+    <h1>🎵 Audio</h1>
+
+    <p class="subtitle">
+        Add music and control your project's audio.
+    </p>
+
+
+    <div class="audio-editor">
+
+        <div class="audio-top">
+
+
+            <!-- IMPORT -->
+
+            <div class="music-box">
+
+                <div class="music-icon">
+                    🎵
+                </div>
+
+                <p id="audioName">
+                    Import music or audio
+                </p>
+
+                <button
+                    class="import-btn"
+                    onclick="document.getElementById('audioInput').click()">
+
+                    ＋ Import Audio
+
+                </button>
+
+                <input
+                    id="audioInput"
+                    type="file"
+                    accept="audio/*"
+                    hidden
+                >
+
+            </div>
+
+
+            <!-- CONTROLS -->
+
+            <div class="controls">
+
+                <h2>
+                    Audio Settings
+                </h2>
+
+
+                <label>
+                    VOLUME
+                    <span
+                        class="value"
+                        id="volumeValue">
+                        100%
+                    </span>
+                </label>
+
+                <input
+                    id="volume"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="100">
+
+
+                <label>
+                    FADE IN
+                    <span
+                        class="value"
+                        id="fadeInValue">
+                        0s
+                    </span>
+                </label>
+
+                <input
+                    id="fadeIn"
+                    type="range"
+                    min="0"
+                    max="10"
+                    value="0">
+
+
+                <label>
+                    FADE OUT
+                    <span
+                        class="value"
+                        id="fadeOutValue">
+                        0s
+                    </span>
+                </label>
+
+                <input
+                    id="fadeOut"
+                    type="range"
+                    min="0"
+                    max="10"
+                    value="0">
+
+
+                <label>
+                    AUDIO SPEED
+                </label>
+
+                <select id="audioSpeed">
+
+                    <option value="0.5">
+                        0.5x
+                    </option>
+
+                    <option value="0.75">
+                        0.75x
+                    </option>
+
+                    <option value="1" selected>
+                        1x Normal
+                    </option>
+
+                    <option value="1.25">
+                        1.25x
+                    </option>
+
+                    <option value="1.5">
+                        1.5x
+                    </option>
+
+                    <option value="2">
+                        2x
+                    </option>
+
+                </select>
+
+
+                <div class="actions">
+
+                    <button
+                        class="btn"
+                        onclick="resetAudio()">
+
+                        Reset
+
+                    </button>
+
+                    <button
+                        class="btn primary"
+                        onclick="applyAudio()">
+
+                        Apply
+
+                    </button>
+
+                </div>
+
+                <div
+                    class="message"
+                    id="message">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TIMELINE -->
+
+        <div class="timeline-area">
+
+            <div class="timeline-title">
+                AUDIO TRACK
+            </div>
+
+            <div class="timeline">
+
+                <div
+                    class="audio-clip"
+                    id="audioClip">
+
+                    🎵 Audio Track
+
+                    <div class="wave" id="wave">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<script>
+
+const audioInput =
+    document.getElementById("audioInput");
+
+const audioName =
+    document.getElementById("audioName");
+
+const audioClip =
+    document.getElementById("audioClip");
+
+const volume =
+    document.getElementById("volume");
+
+const volumeValue =
+    document.getElementById("volumeValue");
+
+const fadeIn =
+    document.getElementById("fadeIn");
+
+const fadeInValue =
+    document.getElementById("fadeInValue");
+
+const fadeOut =
+    document.getElementById("fadeOut");
+
+const fadeOutValue =
+    document.getElementById("fadeOutValue");
+
+const audioSpeed =
+    document.getElementById("audioSpeed");
+
+const message =
+    document.getElementById("message");
+
+
+audioInput.addEventListener(
+    "change",
+    function(){
+
+        const file =
+            this.files[0];
+
+        if(!file){
+            return;
+        }
+
+        audioName.textContent =
+            file.name;
+
+        audioClip.textContent =
+            "🎵 " + file.name;
+
+        localStorage.setItem(
+            "audioName",
+            file.name
+        );
+
+        createWave();
+
+    }
+);
+
+
+volume.addEventListener(
+    "input",
+    function(){
+
+        volumeValue.textContent =
+            this.value + "%";
+
+    }
+);
+
+
+fadeIn.addEventListener(
+    "input",
+    function(){
+
+        fadeInValue.textContent =
+            this.value + "s";
+
+    }
+);
+
+
+fadeOut.addEventListener(
+    "input",
+    function(){
+
+        fadeOutValue.textContent =
+            this.value + "s";
+
+    }
+);
+
+
+function createWave(){
+
+    const wave =
+        document.getElementById("wave");
+
+    wave.innerHTML = "";
+
+    for(let i=0;i<55;i++){
+
+        const bar =
+            document.createElement("i");
+
+        const height =
+            Math.floor(
+                Math.random()*15
+            ) + 3;
+
+        bar.style.height =
+            height + "px";
+
+        wave.appendChild(bar);
+
+    }
+
+}
+
+
+function applyAudio(){
+
+    const name =
+        audioInput.files[0]
+        ? audioInput.files[0].name
+        : localStorage.getItem("audioName");
+
+    if(!name){
+
+        message.textContent =
+            "Please import an audio file first.";
+
+        return;
+
+    }
+
+    localStorage.setItem(
+        "audioVolume",
+        volume.value
+    );
+
+    localStorage.setItem(
+        "audioFadeIn",
+        fadeIn.value
+    );
+
+    localStorage.setItem(
+        "audioFadeOut",
+        fadeOut.value
+    );
+
+    localStorage.setItem(
+        "audioSpeed",
+        audioSpeed.value
+    );
+
+    message.textContent =
+        "✓ Audio settings saved to your project.";
+
+}
+
+
+function resetAudio(){
+
+    volume.value = 100;
+    volumeValue.textContent = "100%";
+
+    fadeIn.value = 0;
+    fadeInValue.textContent = "0s";
+
+    fadeOut.value = 0;
+    fadeOutValue.textContent = "0s";
+
+    audioSpeed.value = 1;
+
+    message.textContent =
+        "Audio settings reset.";
+
+}
+
+
+const savedAudio =
+    localStorage.getItem("audioName");
+
+if(savedAudio){
+
+    audioName.textContent =
+        savedAudio;
+
+    audioClip.textContent =
+        "🎵 " + savedAudio;
+
+    createWave();
+
+}
+
+</script>
+
+</body>
+</html>
