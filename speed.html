@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Speed</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#0d0e11;
+    color:white;
+    min-height:100vh;
+}
+
+/* TOP BAR */
+.topbar{
+    height:60px;
+    background:#17181c;
+    border-bottom:1px solid #292b31;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.project{
+    color:#aaa;
+    font-size:14px;
+}
+
+.export-btn{
+    background:#8b5cf6;
+    border:0;
+    color:white;
+    padding:10px 18px;
+    border-radius:7px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    top:60px;
+    left:0;
+    bottom:0;
+    width:210px;
+    background:#15161a;
+    border-right:1px solid #292b31;
+    padding:15px 10px;
+    overflow-y:auto;
+}
+
+.side-title{
+    color:#777;
+    font-size:11px;
+    text-transform:uppercase;
+    padding:10px;
+}
+
+.side-link{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 12px;
+    margin-bottom:3px;
+    color:#bdbdc4;
+    text-decoration:none;
+    border-radius:7px;
+    font-size:14px;
+}
+
+.side-link:hover{
+    background:#24262d;
+    color:white;
+}
+
+.side-link.active{
+    background:#282032;
+    color:#c084fc;
+}
+
+/* MAIN */
+.main{
+    margin-left:210px;
+    padding-top:60px;
+    min-height:100vh;
+}
+
+.content{
+    padding:24px;
+}
+
+.page-title{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.page-subtitle{
+    color:#888;
+    margin-top:6px;
+    font-size:14px;
+}
+
+/* EDITOR */
+.editor{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:1fr 360px;
+    gap:20px;
+}
+
+/* PREVIEW */
+.preview-box{
+    background:#08090b;
+    border:1px solid #292b31;
+    border-radius:12px;
+    min-height:470px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+}
+
+.preview-box video{
+    max-width:100%;
+    max-height:470px;
+    display:none;
+}
+
+.no-video{
+    color:#666;
+    text-align:center;
+}
+
+.no-video .icon{
+    font-size:50px;
+    margin-bottom:12px;
+}
+
+/* CONTROLS */
+.controls{
+    background:#181a20;
+    border:1px solid #292b31;
+    border-radius:12px;
+    padding:18px;
+}
+
+.control-title{
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.import{
+    width:100%;
+    padding:11px;
+    background:#24262d;
+    border:1px solid #343640;
+    color:white;
+    border-radius:7px;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+.import:hover{
+    background:#30323a;
+}
+
+/* SPEED GRID */
+.speed-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+}
+
+.speed-btn{
+    background:#23252b;
+    border:2px solid transparent;
+    color:#ddd;
+    padding:14px 5px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.speed-btn:hover{
+    background:#30323a;
+}
+
+.speed-btn.active{
+    border-color:#a855f7;
+    color:#d8b4fe;
+    background:#292033;
+}
+
+/* CUSTOM */
+.custom-box{
+    margin-top:24px;
+    padding-top:20px;
+    border-top:1px solid #2c2e35;
+}
+
+.custom-head{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:12px;
+    color:#bbb;
+    font-size:13px;
+}
+
+input[type="range"]{
+    width:100%;
+    accent-color:#a855f7;
+}
+
+.speed-value{
+    text-align:center;
+    font-size:27px;
+    font-weight:bold;
+    margin:15px 0;
+}
+
+.speed-value span{
+    color:#c084fc;
+}
+
+/* DURATION */
+.duration{
+    margin-top:20px;
+    background:#202127;
+    border-radius:8px;
+    padding:12px;
+}
+
+.duration-row{
+    display:flex;
+    justify-content:space-between;
+    color:#999;
+    font-size:12px;
+    padding:4px 0;
+}
+
+.duration-row strong{
+    color:white;
+}
+
+/* ACTIONS */
+.actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.apply{
+    flex:1;
+    background:#8b5cf6;
+    color:white;
+    border:0;
+    padding:12px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.reset{
+    flex:1;
+    background:#292b31;
+    color:white;
+    border:0;
+    padding:12px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.status{
+    margin-top:15px;
+    padding:11px;
+    border-radius:7px;
+    background:#202127;
+    color:#aaa;
+    font-size:12px;
+    text-align:center;
+}
+
+/* MOBILE */
+@media(max-width:800px){
+
+    .sidebar{
+        width:62px;
+        padding:10px 6px;
+    }
+
+    .side-title{
+        display:none;
+    }
+
+    .side-link{
+        justify-content:center;
+        padding:12px 5px;
+        font-size:0;
+    }
+
+    .side-link span{
+        font-size:19px;
+    }
+
+    .main{
+        margin-left:62px;
+    }
+
+    .project{
+        display:none;
+    }
+
+    .editor{
+        grid-template-columns:1fr;
+    }
+
+    .preview-box{
+        min-height:300px;
+    }
+
+    .preview-box video{
+        max-height:300px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+
+    <div class="logo">✂️ GyanCut</div>
+
+    <div class="project">
+        My Video Project
+    </div>
+
+    <button class="export-btn" onclick="goExport()">
+        Export
+    </button>
+
+</div>
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="side-title">Editor</div>
+
+    <a class="side-link" href="index.html">
+        <span>🏠</span> Home
+    </a>
+
+    <a class="side-link" href="media.html">
+        <span>🖼️</span> Media
+    </a>
+
+    <a class="side-link" href="trim.html">
+        <span>✂️</span> Trim
+    </a>
+
+    <a class="side-link" href="text.html">
+        <span>🔤</span> Text
+    </a>
+
+    <a class="side-link" href="audio.html">
+        <span>🎵</span> Audio
+    </a>
+
+    <a class="side-link" href="filters.html">
+        <span>🎨</span> Filters
+    </a>
+
+    <a class="side-link active" href="speed.html">
+        <span>⚡</span> Speed
+    </a>
+
+    <a class="side-link" href="transform.html">
+        <span>↔️</span> Transform
+    </a>
+
+    <a class="side-link" href="effects.html">
+        <span>✨</span> Effects
+    </a>
+
+    <a class="side-link" href="stickers.html">
+        <span>😀</span> Stickers
+    </a>
+
+    <div class="side-title">Project</div>
+
+    <a class="side-link" href="timeline.html">
+        <span>🎞️</span> Timeline
+    </a>
+
+    <a class="side-link" href="preview.html">
+        <span>▶️</span> Preview
+    </a>
+
+    <a class="side-link" href="export.html">
+        <span>📤</span> Export
+    </a>
+
+    <a class="side-link" href="settings.html">
+        <span>⚙️</span> Settings
+    </a>
+
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="content">
+
+        <div class="page-title">
+            ⚡ Speed
+        </div>
+
+        <div class="page-subtitle">
+            Make your video slower or faster.
+        </div>
+
+
+        <div class="editor">
+
+            <!-- VIDEO PREVIEW -->
+            <div class="preview-box">
+
+                <video id="videoPreview" controls></video>
+
+                <div class="no-video" id="noVideo">
+
+                    <div class="icon">🎬</div>
+
+                    <div>
+                        Import a video to adjust its speed
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTROLS -->
+            <div class="controls">
+
+                <div class="control-title">
+                    Playback Speed
+                </div>
+
+
+                <button class="import"
+                        onclick="document.getElementById('fileInput').click()">
+
+                    📁 Import Video
+
+                </button>
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    accept="video/*"
+                    hidden
+                >
+
+
+                <!-- SPEED PRESETS -->
+                <div class="speed-grid">
+
+                    <button class="speed-btn"
+                            data-speed="0.25"
+                            onclick="setSpeed(0.25,this)">
+                        0.25x
+                    </button>
+
+                    <button class="speed-btn"
+                            data-speed="0.5"
+                            onclick="setSpeed(0.5,this)">
+                        0.5x
+                    </button>
+
+                    <button class="speed-btn active"
+                            data-speed="1"
+                            onclick="setSpeed(1,this)">
+                        1x
+                    </button>
+
+                    <button class="speed-btn"
+                            data-speed="1.5"
+                            onclick="setSpeed(1.5,this)">
+                        1.5x
+                    </button>
+
+                    <button class="speed-btn"
+                            data-speed="2"
+                            onclick="setSpeed(2,this)">
+                        2x
+                    </button>
+
+                    <button class="speed-btn"
+                            data-speed="3"
+                            onclick="setSpeed(3,this)">
+                        3x
+                    </button>
+
+                    <button class="speed-btn"
+                            data-speed="4"
+                            onclick="setSpeed(4,this)">
+                        4x
+                    </button>
+
+                    <button class="speed-btn"
+                            data-speed="0.75"
+                            onclick="setSpeed(0.75,this)">
+                        0.75x
+                    </button>
+
+                    <button class="speed-btn"
+                            data-speed="1.25"
+                            onclick="setSpeed(1.25,this)">
+                        1.25x
+                    </button>
+
+                </div>
+
+
+                <!-- CUSTOM SPEED -->
+                <div class="custom-box">
+
+                    <div class="custom-head">
+
+                        <span>Custom Speed</span>
+
+                        <span>0.25x — 4x</span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="speedRange"
+                        min="0.25"
+                        max="4"
+                        step="0.05"
+                        value="1"
+                        oninput="customSpeed()"
+                    >
+
+
+                    <div class="speed-value">
+
+                        <span id="speedValue">1.00x</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DURATION -->
+                <div class="duration">
+
+                    <div class="duration-row">
+
+                        <span>Original Duration</span>
+
+                        <strong id="originalDuration">
+                            00:00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="duration-row">
+
+                        <span>New Duration</span>
+
+                        <strong id="newDuration">
+                            00:00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+                <div class="actions">
+
+                    <button class="reset"
+                            onclick="resetSpeed()">
+
+                        Reset
+
+                    </button>
+
+                    <button class="apply"
+                            onclick="applySpeed()">
+
+                        ✓ Apply
+
+                    </button>
+
+                </div>
+
+
+                <div class="status" id="status">
+
+                    Normal speed selected
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const video =
+    document.getElementById("videoPreview");
+
+const noVideo =
+    document.getElementById("noVideo");
+
+const fileInput =
+    document.getElementById("fileInput");
+
+const speedRange =
+    document.getElementById("speedRange");
+
+const speedValue =
+    document.getElementById("speedValue");
+
+let selectedSpeed = 1;
+
+
+/* LOAD VIDEO */
+
+const savedVideo =
+    localStorage.getItem("mediaURL");
+
+if(savedVideo){
+
+    video.src = savedVideo;
+
+    video.style.display = "block";
+
+    noVideo.style.display = "none";
+
+}
+
+
+/* IMPORT */
+
+fileInput.addEventListener("change",function(){
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    const url =
+        URL.createObjectURL(file);
+
+    video.src = url;
+
+    video.style.display = "block";
+
+    noVideo.style.display = "none";
+
+    localStorage.setItem(
+        "mediaURL",
+        url
+    );
+
+    localStorage.setItem(
+        "mediaName",
+        file.name
+    );
+
+});
+
+
+/* VIDEO LOADED */
+
+video.addEventListener("loadedmetadata",function(){
+
+    updateDuration();
+
+});
+
+
+/* PRESET SPEED */
+
+function setSpeed(speed,element){
+
+    selectedSpeed = speed;
+
+    speedRange.value = speed;
+
+    speedValue.innerText =
+        speed.toFixed(2) + "x";
+
+    document
+        .querySelectorAll(".speed-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+    if(element){
+
+        element.classList.add("active");
+
+    }
+
+    updatePlayback();
+
+    updateDuration();
+
+    document.getElementById("status").innerText =
+        speed === 1
+        ? "Normal speed selected"
+        : speed.toFixed(2) + "x speed selected";
+
+}
+
+
+/* CUSTOM */
+
+function customSpeed(){
+
+    selectedSpeed =
+        Number(speedRange.value);
+
+    speedValue.innerText =
+        selectedSpeed.toFixed(2) + "x";
+
+    document
+        .querySelectorAll(".speed-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+    updatePlayback();
+
+    updateDuration();
+
+    document.getElementById("status").innerText =
+        selectedSpeed.toFixed(2) +
+        "x custom speed";
+
+}
+
+
+/* PLAYBACK */
+
+function updatePlayback(){
+
+    if(video){
+
+        video.playbackRate =
+            selectedSpeed;
+
+    }
+
+}
+
+
+/* DURATION */
+
+function updateDuration(){
+
+    if(!video.duration ||
+       isNaN(video.duration)){
+
+        return;
+
+    }
+
+    const original =
+        video.duration;
+
+    const newDuration =
+        original / selectedSpeed;
+
+    document.getElementById(
+        "originalDuration"
+    ).innerText =
+        formatTime(original);
+
+    document.getElementById(
+        "newDuration"
+    ).innerText =
+        formatTime(newDuration);
+
+}
+
+
+/* TIME FORMAT */
+
+function formatTime(seconds){
+
+    if(!seconds ||
+       isNaN(seconds)){
+
+        return "00:00";
+
+    }
+
+    const minutes =
+        Math.floor(seconds / 60);
+
+    const secs =
+        Math.floor(seconds % 60);
+
+    return String(minutes).padStart(2,"0")
+        + ":" +
+        String(secs).padStart(2,"0");
+
+}
+
+
+/* APPLY */
+
+function applySpeed(){
+
+    localStorage.setItem(
+        "videoSpeed",
+        selectedSpeed
+    );
+
+    document.getElementById("status").innerText =
+        "✓ " +
+        selectedSpeed.toFixed(2) +
+        "x speed applied";
+
+}
+
+
+/* RESET */
+
+function resetSpeed(){
+
+    selectedSpeed = 1;
+
+    speedRange.value = 1;
+
+    speedValue.innerText =
+        "1.00x";
+
+    document
+        .querySelectorAll(".speed-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+    const normal =
+        document.querySelector(
+            '[data-speed="1"]'
+        );
+
+    if(normal){
+
+        normal.classList.add("active");
+
+    }
+
+    updatePlayback();
+
+    updateDuration();
+
+    localStorage.setItem(
+        "videoSpeed",
+        1
+    );
+
+    document.getElementById("status").innerText =
+        "Normal speed selected";
+
+}
+
+
+/* LOAD SAVED SPEED */
+
+const savedSpeed =
+    localStorage.getItem("videoSpeed");
+
+if(savedSpeed){
+
+    selectedSpeed =
+        Number(savedSpeed);
+
+    speedRange.value =
+        selectedSpeed;
+
+    speedValue.innerText =
+        selectedSpeed.toFixed(2) + "x";
+
+}
+
+
+/* EXPORT */
+
+function goExport(){
+
+    window.location.href =
+        "export.html";
+
+}
+
+
+/* INITIAL */
+
+updatePlayback();
+
+</script>
+
+</body>
+</html>
