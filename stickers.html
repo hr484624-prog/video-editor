@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Stickers</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#0d0e11;
+    color:white;
+    min-height:100vh;
+}
+
+/* TOP BAR */
+.topbar{
+    height:60px;
+    background:#17181c;
+    border-bottom:1px solid #292b31;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.project{
+    color:#aaa;
+    font-size:14px;
+}
+
+.export-btn{
+    background:#8b5cf6;
+    border:0;
+    color:white;
+    padding:10px 18px;
+    border-radius:7px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    top:60px;
+    left:0;
+    bottom:0;
+    width:210px;
+    background:#15161a;
+    border-right:1px solid #292b31;
+    padding:15px 10px;
+    overflow-y:auto;
+}
+
+.side-title{
+    color:#777;
+    font-size:11px;
+    text-transform:uppercase;
+    padding:10px;
+}
+
+.side-link{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 12px;
+    margin-bottom:3px;
+    color:#bdbdc4;
+    text-decoration:none;
+    border-radius:7px;
+    font-size:14px;
+}
+
+.side-link:hover{
+    background:#24262d;
+    color:white;
+}
+
+.side-link.active{
+    background:#282032;
+    color:#c084fc;
+}
+
+/* MAIN */
+.main{
+    margin-left:210px;
+    padding-top:60px;
+    min-height:100vh;
+}
+
+.content{
+    padding:24px;
+}
+
+.page-title{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.page-subtitle{
+    color:#888;
+    margin-top:6px;
+    font-size:14px;
+}
+
+/* EDITOR */
+.editor{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:1fr 360px;
+    gap:20px;
+}
+
+/* PREVIEW */
+.preview-box{
+    background:#08090b;
+    border:1px solid #292b31;
+    border-radius:12px;
+    min-height:470px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+}
+
+.preview-video{
+    max-width:90%;
+    max-height:430px;
+    display:none;
+    object-fit:contain;
+}
+
+.no-video{
+    color:#666;
+    text-align:center;
+}
+
+.no-video .icon{
+    font-size:50px;
+    margin-bottom:12px;
+}
+
+/* STICKER LAYER */
+.sticker-layer{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+}
+
+.sticker{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    font-size:80px;
+    cursor:move;
+    user-select:none;
+    pointer-events:auto;
+    line-height:1;
+    z-index:10;
+}
+
+.sticker.selected{
+    outline:2px dashed #a855f7;
+    outline-offset:8px;
+}
+
+/* CONTROLS */
+.controls{
+    background:#181a20;
+    border:1px solid #292b31;
+    border-radius:12px;
+    padding:18px;
+    max-height:650px;
+    overflow-y:auto;
+}
+
+.control-title{
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.import{
+    width:100%;
+    padding:11px;
+    background:#24262d;
+    border:1px solid #343640;
+    color:white;
+    border-radius:7px;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+/* STICKER GRID */
+.sticker-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+}
+
+.sticker-btn{
+    height:60px;
+    background:#24262d;
+    border:2px solid transparent;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:30px;
+}
+
+.sticker-btn:hover{
+    background:#30323a;
+}
+
+.sticker-btn.active{
+    border-color:#a855f7;
+    background:#292033;
+}
+
+/* SECTION */
+.section{
+    border-top:1px solid #2c2e35;
+    margin-top:20px;
+    padding-top:18px;
+}
+
+.section-title{
+    color:#aaa;
+    font-size:12px;
+    text-transform:uppercase;
+    margin-bottom:12px;
+}
+
+/* RANGE */
+.range-head{
+    display:flex;
+    justify-content:space-between;
+    color:#bbb;
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+input[type="range"]{
+    width:100%;
+    accent-color:#a855f7;
+}
+
+/* POSITION */
+.position-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.position-box{
+    background:#202127;
+    padding:9px;
+    border-radius:7px;
+}
+
+.position-box label{
+    display:block;
+    color:#888;
+    font-size:10px;
+    margin-bottom:5px;
+}
+
+.position-box input{
+    width:100%;
+    background:transparent;
+    border:0;
+    outline:0;
+    color:white;
+}
+
+/* ROTATION */
+.rotation-value{
+    text-align:center;
+    color:#c084fc;
+    font-size:18px;
+    font-weight:bold;
+    margin:10px 0;
+}
+
+/* BUTTONS */
+.actions{
+    display:flex;
+    gap:8px;
+    margin-top:20px;
+}
+
+.remove{
+    flex:1;
+    background:#292b31;
+    color:white;
+    border:0;
+    padding:11px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.apply{
+    flex:1;
+    background:#8b5cf6;
+    color:white;
+    border:0;
+    padding:11px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.reset{
+    width:100%;
+    margin-top:8px;
+    background:#24262d;
+    color:#ddd;
+    border:0;
+    padding:10px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.status{
+    margin-top:14px;
+    padding:11px;
+    background:#202127;
+    border-radius:7px;
+    color:#aaa;
+    font-size:12px;
+    text-align:center;
+}
+
+/* MOBILE */
+@media(max-width:800px){
+
+    .sidebar{
+        width:62px;
+        padding:10px 6px;
+    }
+
+    .side-title{
+        display:none;
+    }
+
+    .side-link{
+        justify-content:center;
+        padding:12px 5px;
+        font-size:0;
+    }
+
+    .side-link span{
+        font-size:19px;
+    }
+
+    .main{
+        margin-left:62px;
+    }
+
+    .project{
+        display:none;
+    }
+
+    .editor{
+        grid-template-columns:1fr;
+    }
+
+    .preview-box{
+        min-height:300px;
+    }
+
+    .preview-video{
+        max-height:270px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+
+    <div class="logo">
+        ✂️ GyanCut
+    </div>
+
+    <div class="project">
+        My Video Project
+    </div>
+
+    <button class="export-btn" onclick="goExport()">
+        Export
+    </button>
+
+</div>
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="side-title">
+        Editor
+    </div>
+
+    <a class="side-link" href="index.html">
+        <span>🏠</span> Home
+    </a>
+
+    <a class="side-link" href="media.html">
+        <span>🖼️</span> Media
+    </a>
+
+    <a class="side-link" href="trim.html">
+        <span>✂️</span> Trim
+    </a>
+
+    <a class="side-link" href="text.html">
+        <span>🔤</span> Text
+    </a>
+
+    <a class="side-link" href="audio.html">
+        <span>🎵</span> Audio
+    </a>
+
+    <a class="side-link" href="filters.html">
+        <span>🎨</span> Filters
+    </a>
+
+    <a class="side-link" href="speed.html">
+        <span>⚡</span> Speed
+    </a>
+
+    <a class="side-link" href="transform.html">
+        <span>↔️</span> Transform
+    </a>
+
+    <a class="side-link" href="effects.html">
+        <span>✨</span> Effects
+    </a>
+
+    <a class="side-link active" href="stickers.html">
+        <span>😀</span> Stickers
+    </a>
+
+    <div class="side-title">
+        Project
+    </div>
+
+    <a class="side-link" href="timeline.html">
+        <span>🎞️</span> Timeline
+    </a>
+
+    <a class="side-link" href="preview.html">
+        <span>▶️</span> Preview
+    </a>
+
+    <a class="side-link" href="export.html">
+        <span>📤</span> Export
+    </a>
+
+    <a class="side-link" href="settings.html">
+        <span>⚙️</span> Settings
+    </a>
+
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="content">
+
+    <div class="page-title">
+        😀 Stickers
+    </div>
+
+    <div class="page-subtitle">
+        Add stickers and emojis to your video.
+    </div>
+
+
+    <div class="editor">
+
+        <!-- PREVIEW -->
+
+        <div class="preview-box">
+
+            <video
+                class="preview-video"
+                id="videoPreview"
+                controls>
+            </video>
+
+            <div
+                class="no-video"
+                id="noVideo">
+
+                <div class="icon">
+                    🎬
+                </div>
+
+                <div>
+                    Import a video to add stickers
+                </div>
+
+            </div>
+
+            <div
+                class="sticker-layer"
+                id="stickerLayer">
+            </div>
+
+        </div>
+
+
+        <!-- CONTROLS -->
+
+        <div class="controls">
+
+            <div class="control-title">
+                Sticker Library
+            </div>
+
+
+            <button
+                class="import"
+                onclick="document.getElementById('fileInput').click()">
+
+                📁 Import Video
+
+            </button>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept="video/*"
+                hidden
+            >
+
+
+            <!-- STICKERS -->
+
+            <div class="sticker-grid">
+
+                <button class="sticker-btn"
+                    onclick="addSticker('😀',this)">
+                    😀
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('😂',this)">
+                    😂
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('😍',this)">
+                    😍
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('😎',this)">
+                    😎
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('🔥',this)">
+                    🔥
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('❤️',this)">
+                    ❤️
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('⭐',this)">
+                    ⭐
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('✨',this)">
+                    ✨
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('👍',this)">
+                    👍
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('👑',this)">
+                    👑
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('💯',this)">
+                    💯
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('🎉',this)">
+                    🎉
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('⚡',this)">
+                    ⚡
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('🚀',this)">
+                    🚀
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('🎯',this)">
+                    🎯
+                </button>
+
+                <button class="sticker-btn"
+                    onclick="addSticker('🏆',this)">
+                    🏆
+                </button>
+
+            </div>
+
+
+            <!-- SIZE -->
+
+            <div class="section">
+
+                <div class="section-title">
+                    Sticker Size
+                </div>
+
+                <div class="range-head">
+
+                    <span>
+                        Size
+                    </span>
+
+                    <span
+                        class="value"
+                        id="sizeValue">
+                        80px
+                    </span>
+
+                </div>
+
+                <input
+                    type="range"
+                    id="sizeRange"
+                    min="30"
+                    max="180"
+                    value="80"
+                    oninput="changeSize()"
+                >
+
+            </div>
+
+
+            <!-- ROTATION -->
+
+            <div class="section">
+
+                <div class="section-title">
+                    Rotation
+                </div>
+
+                <input
+                    type="range"
+                    id="rotationRange"
+                    min="-180"
+                    max="180"
+                    value="0"
+                    oninput="changeRotation()"
+                >
+
+                <div
+                    class="rotation-value"
+                    id="rotationValue">
+                    0°
+                </div>
+
+            </div>
+
+
+            <!-- POSITION -->
+
+            <div class="section">
+
+                <div class="section-title">
+                    Position
+                </div>
+
+                <div class="position-grid">
+
+                    <div class="position-box">
+
+                        <label>
+                            Horizontal
+                        </label>
+
+                        <input
+                            type="number"
+                            id="posX"
+                            value="50"
+                            min="0"
+                            max="100"
+                            onchange="changePosition()"
+                        >
+
+                    </div>
+
+
+                    <div class="position-box">
+
+                        <label>
+                            Vertical
+                        </label>
+
+                        <input
+                            type="number"
+                            id="posY"
+                            value="50"
+                            min="0"
+                            max="100"
+                            onchange="changePosition()"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <button
+                    class="remove"
+                    onclick="removeSticker()">
+
+                    🗑 Remove
+
+                </button>
+
+                <button
+                    class="apply"
+                    onclick="applySticker()">
+
+                    ✓ Apply
+
+                </button>
+
+            </div>
+
+
+            <button
+                class="reset"
+                onclick="resetSticker()">
+
+                ↺ Reset Sticker
+
+            </button>
+
+
+            <div
+                class="status"
+                id="status">
+
+                Select a sticker
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const video =
+    document.getElementById("videoPreview");
+
+const noVideo =
+    document.getElementById("noVideo");
+
+const fileInput =
+    document.getElementById("fileInput");
+
+const stickerLayer =
+    document.getElementById("stickerLayer");
+
+let currentSticker = null;
+
+let stickerEmoji = "😀";
+let stickerSize = 80;
+let stickerRotation = 0;
+let stickerX = 50;
+let stickerY = 50;
+
+
+/* LOAD VIDEO */
+
+const savedVideo =
+    localStorage.getItem("mediaURL");
+
+if(savedVideo){
+
+    video.src = savedVideo;
+
+    video.style.display = "block";
+
+    noVideo.style.display = "none";
+
+}
+
+
+/* IMPORT VIDEO */
+
+fileInput.addEventListener(
+    "change",
+    function(){
+
+        const file = this.files[0];
+
+        if(!file) return;
+
+        const url =
+            URL.createObjectURL(file);
+
+        video.src = url;
+
+        video.style.display = "block";
+
+        noVideo.style.display = "none";
+
+        localStorage.setItem(
+            "mediaURL",
+            url
+        );
+
+        localStorage.setItem(
+            "mediaName",
+            file.name
+        );
+
+    }
+);
+
+
+/* ADD STICKER */
+
+function addSticker(emoji,button){
+
+    stickerEmoji = emoji;
+
+    document
+        .querySelectorAll(".sticker-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+    if(button){
+        button.classList.add("active");
+    }
+
+    if(!currentSticker){
+
+        currentSticker =
+            document.createElement("div");
+
+        currentSticker.className =
+            "sticker";
+
+        stickerLayer.appendChild(
+            currentSticker
+        );
+
+        makeDraggable(
+            currentSticker
+        );
+
+    }
+
+    currentSticker.innerText =
+        emoji;
+
+    currentSticker.classList.add(
+        "selected"
+    );
+
+    updateSticker();
+
+    document.getElementById("status").innerText =
+        emoji + " sticker selected";
+
+}
+
+
+/* UPDATE STICKER */
+
+function updateSticker(){
+
+    if(!currentSticker) return;
+
+    currentSticker.innerText =
+        stickerEmoji;
+
+    currentSticker.style.fontSize =
+        stickerSize + "px";
+
+    currentSticker.style.left =
+        stickerX + "%";
+
+    currentSticker.style.top =
+        stickerY + "%";
+
+    currentSticker.style.transform =
+        `translate(-50%,-50%)
+         rotate(${stickerRotation}deg)`;
+
+}
+
+
+/* SIZE */
+
+function changeSize(){
+
+    stickerSize =
+        Number(
+            document.getElementById(
+                "sizeRange"
+            ).value
+        );
+
+    document.getElementById(
+        "sizeValue"
+    ).innerText =
+        stickerSize + "px";
+
+    updateSticker();
+
+}
+
+
+/* ROTATION */
+
+function changeRotation(){
+
+    stickerRotation =
+        Number(
+            document.getElementById(
+                "rotationRange"
+            ).value
+        );
+
+    document.getElementById(
+        "rotationValue"
+    ).innerText =
+        stickerRotation + "°";
+
+    updateSticker();
+
+}
+
+
+/* POSITION */
+
+function changePosition(){
+
+    stickerX =
+        Number(
+            document.getElementById(
+                "posX"
+            ).value
+        );
+
+    stickerY =
+        Number(
+            document.getElementById(
+                "posY"
+            ).value
+        );
+
+    stickerX =
+        Math.max(0,Math.min(100,stickerX));
+
+    stickerY =
+        Math.max(0,Math.min(100,stickerY));
+
+    document.getElementById(
+        "posX"
+    ).value = stickerX;
+
+    document.getElementById(
+        "posY"
+    ).value = stickerY;
+
+    updateSticker();
+
+}
+
+
+/* DRAG STICKER */
+
+function makeDraggable(element){
+
+    let dragging = false;
+
+    function startDrag(e){
+
+        dragging = true;
+
+        element.classList.add(
+            "selected"
+        );
+
+        e.preventDefault();
+
+    }
+
+    function stopDrag(){
+
+        dragging = false;
+
+    }
+
+    function moveDrag(e){
+
+        if(!dragging) return;
+
+        const rect =
+            stickerLayer.getBoundingClientRect();
+
+        let clientX;
+        let clientY;
+
+        if(e.touches){
+
+            clientX =
+                e.touches[0].clientX;
+
+            clientY =
+                e.touches[0].clientY;
+
+        }else{
+
+            clientX =
+                e.clientX;
+
+            clientY =
+                e.clientY;
+
+        }
+
+        stickerX =
+            ((clientX - rect.left)
+            / rect.width) * 100;
+
+        stickerY =
+            ((clientY - rect.top)
+            / rect.height) * 100;
+
+        stickerX =
+            Math.max(
+                0,
+                Math.min(100,stickerX)
+            );
+
+        stickerY =
+            Math.max(
+                0,
+                Math.min(100,stickerY)
+            );
+
+        document.getElementById(
+            "posX"
+        ).value =
+            Math.round(stickerX);
+
+        document.getElementById(
+            "posY"
+        ).value =
+            Math.round(stickerY);
+
+        updateSticker();
+
+    }
+
+
+    element.addEventListener(
+        "mousedown",
+        startDrag
+    );
+
+    document.addEventListener(
+        "mouseup",
+        stopDrag
+    );
+
+    document.addEventListener(
+        "mousemove",
+        moveDrag
+    );
+
+
+    element.addEventListener(
+        "touchstart",
+        startDrag,
+        {passive:false}
+    );
+
+    document.addEventListener(
+        "touchend",
+        stopDrag
+    );
+
+    document.addEventListener(
+        "touchmove",
+        moveDrag,
+        {passive:false}
+    );
+
+}
+
+
+/* REMOVE */
+
+function removeSticker(){
+
+    if(currentSticker){
+
+        currentSticker.remove();
+
+        currentSticker = null;
+
+    }
+
+    document
+        .querySelectorAll(".sticker-btn")
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
+    document.getElementById("status").innerText =
+        "Sticker removed";
+
+}
+
+
+/* RESET */
+
+function resetSticker(){
+
+    stickerSize = 80;
+    stickerRotation = 0;
+    stickerX = 50;
+    stickerY = 50;
+
+    document.getElementById(
+        "sizeRange"
+    ).value = 80;
+
+    document.getElementById(
+        "sizeValue"
+    ).innerText = "80px";
+
+    document.getElementById(
+        "rotationRange"
+    ).value = 0;
+
+    document.getElementById(
+        "rotationValue"
+    ).innerText = "0°";
+
+    document.getElementById(
+        "posX"
+    ).value = 50;
+
+    document.getElementById(
+        "posY"
+    ).value = 50;
+
+    updateSticker();
+
+    document.getElementById("status").innerText =
+        "Sticker reset";
+
+}
+
+
+/* APPLY */
+
+function applySticker(){
+
+    if(!currentSticker){
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "Please select a sticker first";
+
+        return;
+
+    }
+
+    const data = {
+
+        emoji: stickerEmoji,
+        size: stickerSize,
+        rotation: stickerRotation,
+        x: stickerX,
+        y: stickerY
+
+    };
+
+    localStorage.setItem(
+        "stickerData",
+        JSON.stringify(data)
+    );
+
+    currentSticker.classList.remove(
+        "selected"
+    );
+
+    document.getElementById("status").innerText =
+        "✓ Sticker applied";
+
+}
+
+
+/* LOAD SAVED STICKER */
+
+const savedSticker =
+    localStorage.getItem("stickerData");
+
+if(savedSticker){
+
+    try{
+
+        const data =
+            JSON.parse(savedSticker);
+
+        stickerEmoji =
+            data.emoji || "😀";
+
+        stickerSize =
+            Number(data.size) || 80;
+
+        stickerRotation =
+            Number(data.rotation) || 0;
+
+        stickerX =
+            Number(data.x) || 50;
+
+        stickerY =
+            Number(data.y) || 50;
+
+        addSticker(
+            stickerEmoji,
+            null
+        );
+
+        document.getElementById(
+            "sizeRange"
+        ).value = stickerSize;
+
+        document.getElementById(
+            "sizeValue"
+        ).innerText =
+            stickerSize + "px";
+
+        document.getElementById(
+            "rotationRange"
+        ).value =
+            stickerRotation;
+
+        document.getElementById(
+            "rotationValue"
+        ).innerText =
+            stickerRotation + "°";
+
+        document.getElementById(
+            "posX"
+        ).value = stickerX;
+
+        document.getElementById(
+            "posY"
+        ).value = stickerY;
+
+        updateSticker();
+
+    }catch(e){
+
+        console.log(
+            "Sticker data error"
+        );
+
+    }
+
+}
+
+
+/* EXPORT */
+
+function goExport(){
+
+    window.location.href =
+        "export.html";
+
+}
+
+</script>
+
+</body>
+</html>
