@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Preview</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0d0e11;
+  color:#fff;
+  overflow:hidden;
+}
+
+/* TOPBAR */
+.topbar{
+  height:58px;
+  background:#17181c;
+  border-bottom:1px solid #292b31;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:bold;
+}
+
+.project{
+  color:#aaa;
+  font-size:14px;
+}
+
+.top-actions{
+  display:flex;
+  gap:8px;
+}
+
+button{
+  border:0;
+  background:#24262d;
+  color:#fff;
+  padding:9px 14px;
+  border-radius:7px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#34363d;
+}
+
+.export{
+  background:#8b5cf6;
+}
+
+.export:hover{
+  background:#7c3aed;
+}
+
+/* LAYOUT */
+.layout{
+  display:flex;
+  height:calc(100vh - 58px);
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:210px;
+  background:#15161a;
+  border-right:1px solid #292b31;
+  padding:10px 8px;
+}
+
+.side-title{
+  color:#777;
+  font-size:11px;
+  padding:10px;
+  text-transform:uppercase;
+}
+
+.nav{
+  display:block;
+  text-decoration:none;
+  color:#b8b8bd;
+  padding:11px 12px;
+  margin-bottom:3px;
+  border-radius:7px;
+  font-size:14px;
+}
+
+.nav:hover{
+  background:#22242a;
+  color:#fff;
+}
+
+.nav.active{
+  background:#2a213d;
+  color:#c4a7ff;
+}
+
+/* MAIN */
+.main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+
+/* PREVIEW */
+.preview-area{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#090a0d;
+  padding:20px;
+}
+
+.preview-wrapper{
+  position:relative;
+  max-width:850px;
+  max-height:calc(100vh - 200px);
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.video-frame{
+  position:relative;
+  max-width:100%;
+  max-height:100%;
+  aspect-ratio:16/9;
+  background:#050505;
+  border:1px solid #30323a;
+  border-radius:8px;
+  overflow:hidden;
+  box-shadow:0 15px 50px rgba(0,0,0,.45);
+}
+
+.video-frame video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+/* TEXT OVERLAY */
+.text-overlay{
+  position:absolute;
+  left:50%;
+  top:18%;
+  transform:translateX(-50%);
+  color:white;
+  font-size:34px;
+  font-weight:bold;
+  text-align:center;
+  text-shadow:0 2px 7px #000;
+  pointer-events:none;
+  max-width:90%;
+  word-wrap:break-word;
+}
+
+/* STICKER */
+.sticker-overlay{
+  position:absolute;
+  left:75%;
+  top:70%;
+  transform:translate(-50%,-50%);
+  font-size:65px;
+  pointer-events:none;
+  display:none;
+}
+
+/* EMPTY */
+.empty{
+  color:#666;
+  text-align:center;
+  font-size:15px;
+  line-height:1.8;
+}
+
+/* CONTROL BAR */
+.controls{
+  height:88px;
+  background:#15161a;
+  border-top:1px solid #292b31;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:10px 18px;
+}
+
+.control-btn{
+  width:42px;
+  height:42px;
+  padding:0;
+  border-radius:50%;
+  font-size:17px;
+}
+
+.play{
+  background:#8b5cf6;
+  font-size:20px;
+}
+
+.time{
+  color:#aaa;
+  font-size:13px;
+  min-width:105px;
+}
+
+.progress{
+  width:min(550px,45vw);
+  cursor:pointer;
+}
+
+/* RIGHT */
+.right-panel{
+  width:260px;
+  background:#15161a;
+  border-left:1px solid #292b31;
+  padding:16px;
+  overflow-y:auto;
+}
+
+.panel-title{
+  font-size:17px;
+  font-weight:bold;
+  margin-bottom:16px;
+}
+
+.card{
+  background:#1b1d22;
+  border:1px solid #292b31;
+  border-radius:9px;
+  padding:13px;
+  margin-bottom:10px;
+}
+
+.label{
+  color:#777;
+  font-size:10px;
+  margin-bottom:7px;
+}
+
+.value{
+  color:#ddd;
+  font-size:14px;
+  word-break:break-word;
+}
+
+.panel-button{
+  width:100%;
+  margin-top:8px;
+}
+
+/* MOBILE */
+@media(max-width:950px){
+
+  .sidebar{
+    width:62px;
+    padding:8px 5px;
+  }
+
+  .side-title{
+    display:none;
+  }
+
+  .nav{
+    font-size:0;
+    text-align:center;
+    padding:12px 5px;
+  }
+
+  .project{
+    display:none;
+  }
+
+  .right-panel{
+    display:none;
+  }
+
+  .preview-area{
+    padding:10px;
+  }
+
+  .controls{
+    height:75px;
+  }
+
+  .progress{
+    width:35vw;
+  }
+}
+
+@media(max-width:600px){
+
+  .top-actions button:first-child{
+    display:none;
+  }
+
+  .controls{
+    gap:6px;
+  }
+
+  .time{
+    min-width:80px;
+    font-size:11px;
+  }
+
+  .progress{
+    width:30vw;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+
+  <div class="logo">
+    ✂️ GyanCut
+  </div>
+
+  <div class="project">
+    Preview
+  </div>
+
+  <div class="top-actions">
+
+    <button onclick="goEditor()">
+      ← Editor
+    </button>
+
+    <button class="export" onclick="goExport()">
+      Export
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+  <div class="side-title">
+    Editor
+  </div>
+
+  <a class="nav" href="index.html">🏠</a>
+  <a class="nav" href="media.html">🖼️</a>
+  <a class="nav" href="trim.html">✂️</a>
+  <a class="nav" href="text.html">T</a>
+  <a class="nav" href="audio.html">🎵</a>
+  <a class="nav" href="filters.html">🎨</a>
+  <a class="nav" href="speed.html">⚡</a>
+  <a class="nav" href="transform.html">↔️</a>
+  <a class="nav" href="effects.html">✨</a>
+  <a class="nav" href="stickers.html">😀</a>
+  <a class="nav" href="timeline.html">🎞️</a>
+  <a class="nav active" href="preview.html">▶️</a>
+  <a class="nav" href="export.html">📤</a>
+  <a class="nav" href="settings.html">⚙️</a>
+
+</aside>
+
+
+<main class="main">
+
+<!-- PREVIEW AREA -->
+<section class="preview-area">
+
+  <div class="preview-wrapper">
+
+    <div class="video-frame">
+
+      <video
+        id="videoPreview"
+        playsinline
+      ></video>
+
+      <div
+        id="emptyMessage"
+        class="empty"
+      >
+        🎬<br>
+        No video loaded
+      </div>
+
+      <div
+        id="textOverlay"
+        class="text-overlay"
+      ></div>
+
+      <div
+        id="stickerOverlay"
+        class="sticker-overlay"
+      ></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- CONTROLS -->
+<div class="controls">
+
+  <button
+    class="control-btn"
+    onclick="goPrevious()"
+  >
+    ⏮
+  </button>
+
+  <button
+    class="control-btn play"
+    id="playButton"
+    onclick="togglePlay()"
+  >
+    ▶
+  </button>
+
+  <button
+    class="control-btn"
+    onclick="goNext()"
+  >
+    ⏭
+  </button>
+
+  <span
+    class="time"
+    id="timeDisplay"
+  >
+    00:00 / 00:00
+  </span>
+
+  <input
+    class="progress"
+    id="progress"
+    type="range"
+    min="0"
+    max="100"
+    value="0"
+    step="0.01"
+  >
+
+  <button
+    class="control-btn"
+    onclick="toggleFullscreen()"
+  >
+    ⛶
+  </button>
+
+</div>
+
+</main>
+
+
+<!-- RIGHT PANEL -->
+<aside class="right-panel">
+
+  <div class="panel-title">
+    Preview Settings
+  </div>
+
+
+  <div class="card">
+
+    <div class="label">
+      VIDEO
+    </div>
+
+    <div
+      class="value"
+      id="mediaName"
+    >
+      No video
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="label">
+      SPEED
+    </div>
+
+    <div
+      class="value"
+      id="speedValue"
+    >
+      1x
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="label">
+      FILTER
+    </div>
+
+    <div
+      class="value"
+      id="filterValue"
+    >
+      Normal
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="label">
+      EFFECT
+    </div>
+
+    <div
+      class="value"
+      id="effectValue"
+    >
+      None
+    </div>
+
+  </div>
+
+
+  <button
+    class="panel-button"
+    onclick="goTimeline()"
+  >
+    🎞️ Open Timeline
+  </button>
+
+
+  <button
+    class="panel-button"
+    onclick="goEditor()"
+  >
+    ✏️ Continue Editing
+  </button>
+
+
+  <button
+    class="panel-button"
+    onclick="goExport()"
+  >
+    📤 Export Video
+  </button>
+
+</aside>
+
+</div>
+
+
+<script>
+
+const video =
+document.getElementById("videoPreview");
+
+const emptyMessage =
+document.getElementById("emptyMessage");
+
+const playButton =
+document.getElementById("playButton");
+
+const progress =
+document.getElementById("progress");
+
+const timeDisplay =
+document.getElementById("timeDisplay");
+
+const mediaName =
+document.getElementById("mediaName");
+
+const textOverlay =
+document.getElementById("textOverlay");
+
+const stickerOverlay =
+document.getElementById("stickerOverlay");
+
+
+/* LOAD VIDEO */
+
+const savedURL =
+localStorage.getItem("mediaURL");
+
+const savedName =
+localStorage.getItem("mediaName");
+
+
+if(savedURL){
+
+  video.src = savedURL;
+
+  emptyMessage.style.display =
+    "none";
+
+}
+
+
+if(savedName){
+
+  mediaName.textContent =
+    savedName;
+
+}
+
+
+/* VIDEO LOADED */
+
+video.addEventListener(
+  "loadedmetadata",
+  function(){
+
+    progress.max =
+      video.duration;
+
+    updateTime();
+
+  }
+);
+
+
+/* PLAY */
+
+function togglePlay(){
+
+  if(!video.src){
+
+    alert("Please import a video first.");
+
+    return;
+
+  }
+
+  if(video.paused){
+
+    video.play();
+
+  }else{
+
+    video.pause();
+
+  }
+
+}
+
+
+video.addEventListener(
+  "play",
+  function(){
+
+    playButton.textContent =
+      "⏸";
+
+  }
+);
+
+
+video.addEventListener(
+  "pause",
+  function(){
+
+    playButton.textContent =
+      "▶";
+
+  }
+);
+
+
+/* TIME */
+
+video.addEventListener(
+  "timeupdate",
+  function(){
+
+    progress.value =
+      video.currentTime;
+
+    updateTime();
+
+  }
+);
+
+
+function updateTime(){
+
+  const current =
+    video.currentTime || 0;
+
+  const total =
+    video.duration || 0;
+
+  timeDisplay.textContent =
+    formatTime(current)
+    + " / "
+    + formatTime(total);
+
+}
+
+
+function formatTime(seconds){
+
+  if(!seconds || isNaN(seconds)){
+    return "00:00";
+  }
+
+  const minutes =
+    Math.floor(seconds / 60)
+    .toString()
+    .padStart(2,"0");
+
+  const secondsPart =
+    Math.floor(seconds % 60)
+    .toString()
+    .padStart(2,"0");
+
+  return minutes +
+    ":" +
+    secondsPart;
+
+}
+
+
+/* SEEK */
+
+progress.addEventListener(
+  "input",
+  function(){
+
+    video.currentTime =
+      Number(progress.value);
+
+  }
+);
+
+
+/* PREVIOUS */
+
+function goPrevious(){
+
+  video.currentTime =
+    Math.max(
+      0,
+      video.currentTime - 5
+    );
+
+}
+
+
+/* NEXT */
+
+function goNext(){
+
+  video.currentTime =
+    Math.min(
+      video.duration || 0,
+      video.currentTime + 5
+    );
+
+}
+
+
+/* FULLSCREEN */
+
+function toggleFullscreen(){
+
+  const frame =
+    document.querySelector(".video-frame");
+
+  if(!document.fullscreenElement){
+
+    frame.requestFullscreen();
+
+  }else{
+
+    document.exitFullscreen();
+
+  }
+
+}
+
+
+/* TEXT */
+
+const savedText =
+localStorage.getItem("projectText");
+
+if(savedText){
+
+  textOverlay.textContent =
+    savedText;
+
+}
+
+
+/* TEXT SIZE */
+
+const savedTextSize =
+localStorage.getItem("textSize");
+
+if(savedTextSize){
+
+  textOverlay.style.fontSize =
+    savedTextSize + "px";
+
+}
+
+
+/* FILTER */
+
+const savedFilter =
+localStorage.getItem("filter");
+
+const filterIntensity =
+Number(
+  localStorage.getItem("filterIntensity")
+) || 100;
+
+
+if(savedFilter){
+
+  document.getElementById(
+    "filterValue"
+  ).textContent =
+    savedFilter;
+
+}
+
+
+/* APPLY FILTER */
+
+if(savedFilter){
+
+  let filter = "none";
+
+  switch(savedFilter){
+
+    case "bw":
+      filter = "grayscale(100%)";
+      break;
+
+    case "vintage":
+      filter =
+        "sepia(45%) saturate(85%)";
+      break;
+
+    case "bright":
+      filter =
+        "brightness(1.25)";
+      break;
+
+    case "contrast":
+      filter =
+        "contrast(1.35)";
+      break;
+
+    case "color":
+      filter =
+        "saturate(1.5)";
+      break;
+
+    case "cool":
+      filter =
+        "hue-rotate(15deg) saturate(.9)";
+      break;
+
+    case "warm":
+      filter =
+        "sepia(20%) saturate(1.25)";
+      break;
+
+    case "fade":
+      filter =
+        "contrast(.85) brightness(1.08)";
+      break;
+
+  }
+
+  video.style.filter =
+    filter;
+
+}
+
+
+/* SPEED */
+
+const savedSpeed =
+Number(
+  localStorage.getItem("videoSpeed")
+) || 1;
+
+video.playbackRate =
+  savedSpeed;
+
+document.getElementById(
+  "speedValue"
+).textContent =
+  savedSpeed + "x";
+
+
+/* EFFECT */
+
+const savedEffect =
+localStorage.getItem("videoEffect");
+
+
+if(savedEffect){
+
+  document.getElementById(
+    "effectValue"
+  ).textContent =
+    savedEffect;
+
+}
+
+
+/* SIMPLE EFFECTS */
+
+if(savedEffect === "blur"){
+
+  video.style.filter +=
+    " blur(3px)";
+
+}
+
+if(savedEffect === "invert"){
+
+  video.style.filter +=
+    " invert(1)";
+
+}
+
+if(savedEffect === "glow"){
+
+  video.style.filter +=
+    " brightness(1.15) saturate(1.2)";
+
+}
+
+
+/* STICKER */
+
+const savedSticker =
+localStorage.getItem("stickerData");
+
+
+if(savedSticker){
+
+  try{
+
+    const data =
+      JSON.parse(savedSticker);
+
+    if(data.text){
+
+      stickerOverlay.textContent =
+        data.text;
+
+      stickerOverlay.style.display =
+        "block";
+
+      if(data.size){
+
+        stickerOverlay.style.fontSize =
+          data.size + "px";
+
+      }
+
+      if(data.x){
+
+        stickerOverlay.style.left =
+          data.x + "%";
+
+      }
+
+      if(data.y){
+
+        stickerOverlay.style.top =
+          data.y + "%";
+
+      }
+
+      if(data.rotation){
+
+        stickerOverlay.style.transform =
+          "translate(-50%,-50%) rotate("
+          + data.rotation
+          + "deg)";
+
+      }
+
+    }
+
+  }catch(error){
+
+    console.log(
+      "Sticker data unavailable"
+    );
+
+  }
+
+}
+
+
+/* NAVIGATION */
+
+function goEditor(){
+
+  window.location.href =
+    "index.html";
+
+}
+
+
+function goTimeline(){
+
+  window.location.href =
+    "timeline.html";
+
+}
+
+
+function goExport(){
+
+  window.location.href =
+    "export.html";
+
+}
+
+
+/* KEYBOARD SHORTCUTS */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(event.code === "Space"){
+
+      event.preventDefault();
+
+      togglePlay();
+
+    }
+
+    if(event.code === "ArrowLeft"){
+
+      goPrevious();
+
+    }
+
+    if(event.code === "ArrowRight"){
+
+      goNext();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
