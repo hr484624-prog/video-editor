@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Timeline</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0d0e11;
+  color:#fff;
+  overflow:hidden;
+}
+
+/* TOP BAR */
+.topbar{
+  height:58px;
+  background:#17181c;
+  border-bottom:1px solid #292b31;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:bold;
+}
+
+.project{
+  color:#aaa;
+  font-size:14px;
+}
+
+.top-actions{
+  display:flex;
+  gap:8px;
+}
+
+button{
+  border:0;
+  color:#fff;
+  background:#24262d;
+  padding:9px 15px;
+  border-radius:7px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#32343c;
+}
+
+.export{
+  background:#8b5cf6;
+}
+
+.export:hover{
+  background:#7c3aed;
+}
+
+/* LAYOUT */
+.layout{
+  display:flex;
+  height:calc(100vh - 58px);
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:210px;
+  background:#15161a;
+  border-right:1px solid #292b31;
+  padding:12px 8px;
+}
+
+.side-title{
+  color:#777;
+  font-size:11px;
+  padding:10px;
+  text-transform:uppercase;
+}
+
+.nav{
+  display:block;
+  text-decoration:none;
+  color:#b8b8bd;
+  padding:11px 12px;
+  margin-bottom:3px;
+  border-radius:7px;
+  font-size:14px;
+}
+
+.nav:hover{
+  background:#22242a;
+  color:white;
+}
+
+.nav.active{
+  background:#2a213d;
+  color:#c4a7ff;
+}
+
+/* MAIN */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+
+/* WORKSPACE */
+.workspace{
+  flex:1;
+  display:flex;
+  min-height:0;
+}
+
+/* PREVIEW */
+.preview-area{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:#0b0c0f;
+  min-width:0;
+}
+
+.preview-box{
+  width:min(720px,90%);
+  aspect-ratio:16/9;
+  background:#050506;
+  border:1px solid #292b31;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.preview-box video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.empty{
+  color:#666;
+  text-align:center;
+}
+
+.preview-controls{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.time{
+  color:#aaa;
+  font-size:13px;
+  min-width:100px;
+}
+
+/* RIGHT PANEL */
+.right-panel{
+  width:260px;
+  background:#15161a;
+  border-left:1px solid #292b31;
+  padding:16px;
+  overflow-y:auto;
+}
+
+.panel-title{
+  font-size:17px;
+  font-weight:bold;
+  margin-bottom:15px;
+}
+
+.info-card{
+  background:#1b1d22;
+  border:1px solid #292b31;
+  border-radius:9px;
+  padding:14px;
+  margin-bottom:10px;
+}
+
+.info-label{
+  color:#777;
+  font-size:11px;
+  margin-bottom:6px;
+}
+
+.info-value{
+  color:#ddd;
+  font-size:14px;
+  word-break:break-word;
+}
+
+.panel-btn{
+  width:100%;
+  margin-top:8px;
+}
+
+/* TIMELINE */
+.timeline{
+  height:310px;
+  background:#121317;
+  border-top:1px solid #292b31;
+  display:flex;
+  flex-direction:column;
+}
+
+/* TOOLBAR */
+.timeline-toolbar{
+  height:52px;
+  border-bottom:1px solid #292b31;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 12px;
+}
+
+.tool{
+  font-size:12px;
+  padding:7px 11px;
+}
+
+.zoom{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#aaa;
+  font-size:12px;
+}
+
+.zoom input{
+  width:110px;
+}
+
+/* RULER */
+.ruler{
+  height:35px;
+  margin-left:105px;
+  position:relative;
+  border-bottom:1px solid #292b31;
+  overflow:hidden;
+  background:#15161a;
+}
+
+.tick{
+  position:absolute;
+  top:0;
+  height:100%;
+  border-left:1px solid #393b42;
+  color:#777;
+  font-size:9px;
+  padding-left:3px;
+}
+
+/* TRACKS */
+.tracks{
+  flex:1;
+  position:relative;
+  overflow:auto;
+}
+
+.track{
+  height:70px;
+  display:flex;
+  position:relative;
+}
+
+.track-label{
+  width:105px;
+  flex-shrink:0;
+  background:#17181c;
+  border-right:1px solid #292b31;
+  border-bottom:1px solid #292b31;
+  display:flex;
+  align-items:center;
+  padding-left:13px;
+  color:#aaa;
+  font-size:12px;
+}
+
+.track-content{
+  flex:1;
+  min-width:1000px;
+  position:relative;
+  border-bottom:1px solid #292b31;
+}
+
+/* CLIPS */
+.clip{
+  position:absolute;
+  left:15px;
+  top:9px;
+  height:52px;
+  width:350px;
+  border-radius:6px;
+  background:#54359a;
+  border:1px solid #8b5cf6;
+  overflow:hidden;
+  cursor:pointer;
+}
+
+.clip-top{
+  height:28px;
+  padding:6px 9px;
+  font-size:11px;
+  font-weight:bold;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.clip-bottom{
+  height:22px;
+  display:flex;
+  align-items:center;
+  padding:0 8px;
+  font-size:9px;
+  color:#ddd;
+  background:#462d80;
+}
+
+.audio-clip{
+  background:#205d54;
+  border-color:#35c9ad;
+}
+
+.audio-clip .clip-bottom{
+  background:#194b44;
+}
+
+/* PLAYHEAD */
+.playhead{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:105px;
+  width:2px;
+  background:#ff4d67;
+  z-index:20;
+  pointer-events:none;
+}
+
+.playhead-head{
+  position:absolute;
+  top:-1px;
+  left:-5px;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#ff4d67;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+
+  .sidebar{
+    width:62px;
+    padding:8px 5px;
+  }
+
+  .side-title{
+    display:none;
+  }
+
+  .nav{
+    font-size:0;
+    text-align:center;
+    padding:12px 5px;
+  }
+
+  .nav::first-letter{
+    font-size:19px;
+  }
+
+  .right-panel{
+    display:none;
+  }
+
+  .project{
+    display:none;
+  }
+
+  .preview-box{
+    width:92%;
+  }
+
+  .timeline{
+    height:280px;
+  }
+
+  .track-label{
+    width:75px;
+  }
+
+  .ruler{
+    margin-left:75px;
+  }
+
+  .playhead{
+    left:75px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+
+  <div class="logo">✂️ GyanCut</div>
+
+  <div class="project">
+    My Video Project
+  </div>
+
+  <div class="top-actions">
+    <button onclick="goEditor()">Editor</button>
+    <button class="export" onclick="goExport()">Export</button>
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+  <div class="side-title">Editor</div>
+
+  <a class="nav" href="index.html">🏠</a>
+  <a class="nav" href="media.html">🖼️</a>
+  <a class="nav" href="trim.html">✂️</a>
+  <a class="nav" href="text.html">T</a>
+  <a class="nav" href="audio.html">🎵</a>
+  <a class="nav" href="filters.html">🎨</a>
+  <a class="nav" href="speed.html">⚡</a>
+  <a class="nav" href="transform.html">↔️</a>
+  <a class="nav" href="effects.html">✨</a>
+  <a class="nav" href="stickers.html">😀</a>
+  <a class="nav active" href="timeline.html">🎞️</a>
+  <a class="nav" href="preview.html">▶️</a>
+  <a class="nav" href="export.html">📤</a>
+  <a class="nav" href="settings.html">⚙️</a>
+
+</aside>
+
+
+<main class="main">
+
+<!-- WORKSPACE -->
+<section class="workspace">
+
+  <!-- PREVIEW -->
+  <div class="preview-area">
+
+    <div class="preview-box">
+
+      <video id="videoPreview" controls></video>
+
+      <div id="emptyMessage" class="empty">
+        🎬<br>
+        Import a video to start editing
+      </div>
+
+    </div>
+
+    <div class="preview-controls">
+
+      <button onclick="togglePlay()" id="playBtn">▶</button>
+
+      <span class="time" id="timeDisplay">
+        00:00 / 00:00
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- RIGHT PANEL -->
+  <aside class="right-panel">
+
+    <div class="panel-title">
+      Timeline
+    </div>
+
+    <div class="info-card">
+
+      <div class="info-label">
+        PROJECT MEDIA
+      </div>
+
+      <div class="info-value" id="mediaName">
+        No media imported
+      </div>
+
+    </div>
+
+
+    <div class="info-card">
+
+      <div class="info-label">
+        DURATION
+      </div>
+
+      <div class="info-value" id="durationInfo">
+        00:00
+      </div>
+
+    </div>
+
+
+    <div class="info-card">
+
+      <div class="info-label">
+        CURRENT POSITION
+      </div>
+
+      <div class="info-value" id="positionInfo">
+        00:00
+      </div>
+
+    </div>
+
+
+    <button class="panel-btn" onclick="addMarker()">
+      🔖 Add Marker
+    </button>
+
+    <button class="panel-btn" onclick="duplicateClip()">
+      📋 Duplicate Clip
+    </button>
+
+    <button class="panel-btn" onclick="deleteClip()">
+      🗑️ Delete Clip
+    </button>
+
+  </aside>
+
+</section>
+
+
+<!-- TIMELINE -->
+<section class="timeline">
+
+  <div class="timeline-toolbar">
+
+    <button class="tool" onclick="splitClip()">
+      ✂ Split
+    </button>
+
+    <button class="tool" onclick="addTrack()">
+      ＋ Track
+    </button>
+
+    <button class="tool" onclick="deleteClip()">
+      🗑 Delete
+    </button>
+
+    <button class="tool" onclick="goEditor()">
+      ← Editor
+    </button>
+
+    <div class="zoom">
+      Zoom
+      <input
+        type="range"
+        id="zoomSlider"
+        min="50"
+        max="200"
+        value="100"
+        oninput="changeZoom()"
+      >
+    </div>
+
+  </div>
+
+
+  <!-- RULER -->
+  <div class="ruler" id="ruler"></div>
+
+
+  <!-- TRACKS -->
+  <div class="tracks">
+
+    <div class="track">
+
+      <div class="track-label">
+        🎬 VIDEO
+      </div>
+
+      <div class="track-content">
+
+        <div
+          class="clip"
+          id="videoClip"
+          onclick="selectClip(this)"
+        >
+
+          <div class="clip-top" id="clipName">
+            Video Clip
+          </div>
+
+          <div class="clip-bottom">
+            🎞️ Video
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="track">
+
+      <div class="track-label">
+        🎵 AUDIO
+      </div>
+
+      <div class="track-content">
+
+        <div
+          class="clip audio-clip"
+          id="audioClip"
+          style="display:none;"
+        >
+
+          <div class="clip-top" id="audioName">
+            Audio
+          </div>
+
+          <div class="clip-bottom">
+            🎵 Audio Track
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="track">
+
+      <div class="track-label">
+        ✨ EFFECT
+      </div>
+
+      <div class="track-content">
+
+        <div
+          class="clip"
+          id="effectClip"
+          style="
+          display:none;
+          width:200px;
+          background:#6b3b80;
+          border-color:#c084fc;
+          "
+        >
+
+          <div class="clip-top">
+            ✨ Effect
+          </div>
+
+          <div class="clip-bottom">
+            Effect Layer
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- PLAYHEAD -->
+    <div class="playhead" id="playhead">
+
+      <div class="playhead-head"></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+</div>
+
+
+<script>
+
+const video = document.getElementById("videoPreview");
+
+const emptyMessage =
+document.getElementById("emptyMessage");
+
+const playBtn =
+document.getElementById("playBtn");
+
+const timeDisplay =
+document.getElementById("timeDisplay");
+
+const mediaName =
+document.getElementById("mediaName");
+
+const durationInfo =
+document.getElementById("durationInfo");
+
+const positionInfo =
+document.getElementById("positionInfo");
+
+const clipName =
+document.getElementById("clipName");
+
+const videoClip =
+document.getElementById("videoClip");
+
+const audioClip =
+document.getElementById("audioClip");
+
+const audioName =
+document.getElementById("audioName");
+
+const playhead =
+document.getElementById("playhead");
+
+let duration = 0;
+let selectedClip = null;
+
+
+/* LOAD SAVED VIDEO */
+
+const savedURL = localStorage.getItem("mediaURL");
+const savedName = localStorage.getItem("mediaName");
+
+if(savedURL){
+
+  video.src = savedURL;
+
+  emptyMessage.style.display = "none";
+
+  if(savedName){
+
+    mediaName.textContent = savedName;
+    clipName.textContent = savedName;
+
+  }
+
+}
+
+
+/* VIDEO LOADED */
+
+video.addEventListener("loadedmetadata",function(){
+
+  duration = video.duration;
+
+  durationInfo.textContent =
+    formatTime(duration);
+
+  updateTime();
+
+});
+
+
+/* TIME UPDATE */
+
+video.addEventListener("timeupdate",function(){
+
+  updateTime();
+
+  updatePlayhead();
+
+});
+
+
+function updateTime(){
+
+  const current = video.currentTime || 0;
+
+  timeDisplay.textContent =
+    formatTime(current) +
+    " / " +
+    formatTime(duration);
+
+  positionInfo.textContent =
+    formatTime(current);
+
+}
+
+
+function formatTime(seconds){
+
+  if(!seconds || isNaN(seconds)){
+    return "00:00";
+  }
+
+  const min =
+    Math.floor(seconds / 60)
+    .toString()
+    .padStart(2,"0");
+
+  const sec =
+    Math.floor(seconds % 60)
+    .toString()
+    .padStart(2,"0");
+
+  return min + ":" + sec;
+}
+
+
+/* PLAY */
+
+function togglePlay(){
+
+  if(!video.src){
+
+    alert("Please import a video first.");
+
+    return;
+  }
+
+  if(video.paused){
+
+    video.play();
+
+    playBtn.textContent = "⏸";
+
+  }else{
+
+    video.pause();
+
+    playBtn.textContent = "▶";
+
+  }
+
+}
+
+
+video.addEventListener("play",function(){
+
+  playBtn.textContent = "⏸";
+
+});
+
+
+video.addEventListener("pause",function(){
+
+  playBtn.textContent = "▶";
+
+});
+
+
+/* PLAYHEAD */
+
+function updatePlayhead(){
+
+  if(!duration){
+    return;
+  }
+
+  const percentage =
+    video.currentTime / duration;
+
+  const rulerStart = 105;
+
+  const width =
+    document.querySelector(".track-content")
+    .getBoundingClientRect().width;
+
+  playhead.style.left =
+    (rulerStart + percentage * width) + "px";
+
+}
+
+
+/* CREATE RULER */
+
+function createRuler(){
+
+  const ruler =
+    document.getElementById("ruler");
+
+  ruler.innerHTML = "";
+
+  const totalSeconds =
+    Math.max(30, Math.ceil(duration));
+
+  for(let i=0;i<=totalSeconds;i+=5){
+
+    const tick =
+      document.createElement("div");
+
+    tick.className = "tick";
+
+    tick.style.left =
+      (i * 40) + "px";
+
+    tick.textContent =
+      formatTime(i);
+
+    ruler.appendChild(tick);
+
+  }
+
+}
+
+
+video.addEventListener("loadedmetadata",function(){
+
+  createRuler();
+
+});
+
+
+/* SELECT CLIP */
+
+function selectClip(element){
+
+  if(selectedClip){
+
+    selectedClip.style.boxShadow =
+      "none";
+
+  }
+
+  selectedClip = element;
+
+  selectedClip.style.boxShadow =
+    "0 0 0 2px #ffffff";
+
+}
+
+
+/* SPLIT */
+
+function splitClip(){
+
+  if(!duration){
+
+    alert("Import a video first.");
+
+    return;
+  }
+
+  const current =
+    video.currentTime;
+
+  alert(
+    "Split point: " +
+    formatTime(current)
+  );
+
+}
+
+
+/* DELETE */
+
+function deleteClip(){
+
+  if(!selectedClip){
+
+    selectedClip = videoClip;
+
+  }
+
+  selectedClip.style.display =
+    "none";
+
+}
+
+
+/* DUPLICATE */
+
+function duplicateClip(){
+
+  if(!videoClip.style.display ||
+     videoClip.style.display !== "none"){
+
+    const copy =
+      videoClip.cloneNode(true);
+
+    copy.id = "videoClipCopy";
+
+    copy.style.left = "380px";
+
+    copy.onclick = function(){
+
+      selectClip(copy);
+
+    };
+
+    document
+      .querySelector(".track-content")
+      .appendChild(copy);
+
+  }
+
+}
+
+
+/* ADD TRACK */
+
+function addTrack(){
+
+  const tracks =
+    document.querySelector(".tracks");
+
+  const track =
+    document.createElement("div");
+
+  track.className = "track";
+
+  track.innerHTML = `
+    <div class="track-label">
+      🎚️ TRACK
+    </div>
+
+    <div class="track-content">
+    </div>
+  `;
+
+  tracks.appendChild(track);
+
+}
+
+
+/* MARKER */
+
+function addMarker(){
+
+  if(!duration){
+
+    alert("Import a video first.");
+
+    return;
+  }
+
+  const marker =
+    document.createElement("div");
+
+  marker.style.position =
+    "absolute";
+
+  marker.style.top =
+    "0";
+
+  marker.style.bottom =
+    "0";
+
+  marker.style.width =
+    "2px";
+
+  marker.style.background =
+    "#facc15";
+
+  const percentage =
+    video.currentTime / duration;
+
+  marker.style.left =
+    (percentage * 100) + "%";
+
+  document
+    .querySelector(".track-content")
+    .appendChild(marker);
+
+}
+
+
+/* ZOOM */
+
+function changeZoom(){
+
+  const value =
+    document.getElementById("zoomSlider").value;
+
+  const clips =
+    document.querySelectorAll(".clip");
+
+  clips.forEach(function(clip){
+
+    clip.style.transform =
+      "scaleX(" + (value / 100) + ")";
+
+    clip.style.transformOrigin =
+      "left center";
+
+  });
+
+}
+
+
+/* AUDIO */
+
+const savedAudio =
+localStorage.getItem("audioName");
+
+if(savedAudio){
+
+  audioClip.style.display =
+    "block";
+
+  audioName.textContent =
+    savedAudio;
+
+}
+
+
+/* EFFECT */
+
+const savedEffect =
+localStorage.getItem("videoEffect");
+
+if(savedEffect && savedEffect !== "none"){
+
+  document.getElementById(
+    "effectClip"
+  ).style.display = "block";
+
+}
+
+
+/* NAVIGATION */
+
+function goEditor(){
+
+  window.location.href =
+    "index.html";
+
+}
+
+
+function goExport(){
+
+  window.location.href =
+    "export.html";
+
+}
+
+
+/* SAVE TIMELINE SETTINGS */
+
+window.addEventListener("beforeunload",function(){
+
+  localStorage.setItem(
+    "timelineZoom",
+    document.getElementById("zoomSlider").value
+  );
+
+});
+
+
+const savedZoom =
+localStorage.getItem("timelineZoom");
+
+if(savedZoom){
+
+  document.getElementById(
+    "zoomSlider"
+  ).value = savedZoom;
+
+  changeZoom();
+
+}
+
+</script>
+
+</body>
+</html>
