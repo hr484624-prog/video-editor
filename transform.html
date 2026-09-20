@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Transform</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#0d0e11;
+    color:white;
+    min-height:100vh;
+}
+
+/* TOP BAR */
+.topbar{
+    height:60px;
+    background:#17181c;
+    border-bottom:1px solid #292b31;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.project{
+    color:#aaa;
+    font-size:14px;
+}
+
+.export-btn{
+    background:#8b5cf6;
+    border:0;
+    color:white;
+    padding:10px 18px;
+    border-radius:7px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    top:60px;
+    left:0;
+    bottom:0;
+    width:210px;
+    background:#15161a;
+    border-right:1px solid #292b31;
+    padding:15px 10px;
+    overflow-y:auto;
+}
+
+.side-title{
+    color:#777;
+    font-size:11px;
+    text-transform:uppercase;
+    padding:10px;
+}
+
+.side-link{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 12px;
+    margin-bottom:3px;
+    color:#bdbdc4;
+    text-decoration:none;
+    border-radius:7px;
+    font-size:14px;
+}
+
+.side-link:hover{
+    background:#24262d;
+    color:white;
+}
+
+.side-link.active{
+    background:#282032;
+    color:#c084fc;
+}
+
+/* MAIN */
+.main{
+    margin-left:210px;
+    padding-top:60px;
+    min-height:100vh;
+}
+
+.content{
+    padding:24px;
+}
+
+.page-title{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.page-subtitle{
+    color:#888;
+    margin-top:6px;
+    font-size:14px;
+}
+
+/* EDITOR */
+.editor{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:1fr 360px;
+    gap:20px;
+}
+
+/* PREVIEW */
+.preview-box{
+    background:#08090b;
+    border:1px solid #292b31;
+    border-radius:12px;
+    min-height:470px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+}
+
+.preview-inner{
+    width:100%;
+    height:100%;
+    min-height:470px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.preview-box video{
+    max-width:90%;
+    max-height:430px;
+    display:none;
+    object-fit:contain;
+    transition:transform .2s ease;
+}
+
+.no-video{
+    color:#666;
+    text-align:center;
+}
+
+.no-video .icon{
+    font-size:50px;
+    margin-bottom:12px;
+}
+
+/* CONTROLS */
+.controls{
+    background:#181a20;
+    border:1px solid #292b31;
+    border-radius:12px;
+    padding:18px;
+    max-height:650px;
+    overflow-y:auto;
+}
+
+.control-title{
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.import{
+    width:100%;
+    padding:11px;
+    background:#24262d;
+    border:1px solid #343640;
+    color:white;
+    border-radius:7px;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+.section{
+    padding:18px 0;
+    border-top:1px solid #2c2e35;
+}
+
+.section-title{
+    color:#aaa;
+    font-size:12px;
+    text-transform:uppercase;
+    margin-bottom:12px;
+}
+
+/* BUTTONS */
+.button-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+
+.tool-btn{
+    background:#24262d;
+    color:#ddd;
+    border:1px solid #343640;
+    padding:11px 5px;
+    border-radius:7px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.tool-btn:hover{
+    background:#30323a;
+}
+
+.tool-btn:active{
+    transform:scale(.97);
+}
+
+/* ASPECT */
+.aspect-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+
+.aspect{
+    background:#24262d;
+    color:#ccc;
+    border:2px solid transparent;
+    border-radius:7px;
+    padding:10px 5px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.aspect.active{
+    border-color:#a855f7;
+    color:#d8b4fe;
+    background:#292033;
+}
+
+/* RANGE */
+.range-head{
+    display:flex;
+    justify-content:space-between;
+    color:#bbb;
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+input[type="range"]{
+    width:100%;
+    accent-color:#a855f7;
+}
+
+.value{
+    color:#c084fc;
+}
+
+/* POSITION */
+.position-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.position-box{
+    background:#202127;
+    border-radius:7px;
+    padding:10px;
+}
+
+.position-box label{
+    display:block;
+    color:#888;
+    font-size:11px;
+    margin-bottom:5px;
+}
+
+.position-box input{
+    width:100%;
+    background:transparent;
+    color:white;
+    border:0;
+    outline:none;
+}
+
+/* ACTIONS */
+.actions{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+}
+
+.reset{
+    flex:1;
+    background:#292b31;
+    color:white;
+    border:0;
+    padding:12px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.apply{
+    flex:1;
+    background:#8b5cf6;
+    color:white;
+    border:0;
+    padding:12px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.status{
+    margin-top:15px;
+    padding:11px;
+    border-radius:7px;
+    background:#202127;
+    color:#aaa;
+    font-size:12px;
+    text-align:center;
+}
+
+/* MOBILE */
+@media(max-width:800px){
+
+    .sidebar{
+        width:62px;
+        padding:10px 6px;
+    }
+
+    .side-title{
+        display:none;
+    }
+
+    .side-link{
+        justify-content:center;
+        padding:12px 5px;
+        font-size:0;
+    }
+
+    .side-link span{
+        font-size:19px;
+    }
+
+    .main{
+        margin-left:62px;
+    }
+
+    .project{
+        display:none;
+    }
+
+    .editor{
+        grid-template-columns:1fr;
+    }
+
+    .preview-box{
+        min-height:300px;
+    }
+
+    .preview-inner{
+        min-height:300px;
+    }
+
+    .preview-box video{
+        max-height:270px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+
+    <div class="logo">✂️ GyanCut</div>
+
+    <div class="project">
+        My Video Project
+    </div>
+
+    <button class="export-btn" onclick="goExport()">
+        Export
+    </button>
+
+</div>
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="side-title">Editor</div>
+
+    <a class="side-link" href="index.html">
+        <span>🏠</span> Home
+    </a>
+
+    <a class="side-link" href="media.html">
+        <span>🖼️</span> Media
+    </a>
+
+    <a class="side-link" href="trim.html">
+        <span>✂️</span> Trim
+    </a>
+
+    <a class="side-link" href="text.html">
+        <span>🔤</span> Text
+    </a>
+
+    <a class="side-link" href="audio.html">
+        <span>🎵</span> Audio
+    </a>
+
+    <a class="side-link" href="filters.html">
+        <span>🎨</span> Filters
+    </a>
+
+    <a class="side-link" href="speed.html">
+        <span>⚡</span> Speed
+    </a>
+
+    <a class="side-link active" href="transform.html">
+        <span>↔️</span> Transform
+    </a>
+
+    <a class="side-link" href="effects.html">
+        <span>✨</span> Effects
+    </a>
+
+    <a class="side-link" href="stickers.html">
+        <span>😀</span> Stickers
+    </a>
+
+    <div class="side-title">Project</div>
+
+    <a class="side-link" href="timeline.html">
+        <span>🎞️</span> Timeline
+    </a>
+
+    <a class="side-link" href="preview.html">
+        <span>▶️</span> Preview
+    </a>
+
+    <a class="side-link" href="export.html">
+        <span>📤</span> Export
+    </a>
+
+    <a class="side-link" href="settings.html">
+        <span>⚙️</span> Settings
+    </a>
+
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="content">
+
+    <div class="page-title">
+        ↔️ Transform
+    </div>
+
+    <div class="page-subtitle">
+        Rotate, flip, zoom and position your video.
+    </div>
+
+
+    <div class="editor">
+
+        <!-- PREVIEW -->
+
+        <div class="preview-box">
+
+            <div class="preview-inner">
+
+                <video
+                    id="videoPreview"
+                    controls>
+                </video>
+
+                <div class="no-video" id="noVideo">
+
+                    <div class="icon">🎬</div>
+
+                    <div>
+                        Import a video to transform
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTROLS -->
+
+        <div class="controls">
+
+            <div class="control-title">
+                Transform
+            </div>
+
+
+            <button
+                class="import"
+                onclick="document.getElementById('fileInput').click()">
+
+                📁 Import Video
+
+            </button>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept="video/*"
+                hidden
+            >
+
+
+            <!-- ROTATE / FLIP -->
+
+            <div class="section">
+
+                <div class="section-title">
+                    Rotate & Flip
+                </div>
+
+                <div class="button-row">
+
+                    <button
+                        class="tool-btn"
+                        onclick="rotate(-90)">
+
+                        ↶ Rotate
+
+                    </button>
+
+                    <button
+                        class="tool-btn"
+                        onclick="rotate(90)">
+
+                        ↷ Rotate
+
+                    </button>
+
+                    <button
+                        class="tool-btn"
+                        onclick="flipHorizontal()">
+
+                        ↔ Flip H
+
+                    </button>
+
+                    <button
+                        class="tool-btn"
+                        onclick="flipVertical()">
+
+                        ↕ Flip V
+
+                    </button>
+
+                    <button
+                        class="tool-btn"
+                        onclick="resetRotation()">
+
+                        ⟳ Reset
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ZOOM -->
+
+            <div class="section">
+
+                <div class="section-title">
+                    Zoom
+                </div>
+
+                <div class="range-head">
+
+                    <span>Zoom</span>
+
+                    <span class="value" id="zoomValue">
+                        100%
+                    </span>
+
+                </div>
+
+                <input
+                    type="range"
+                    id="zoom"
+                    min="50"
+                    max="200"
+                    value="100"
+                    oninput="changeZoom()"
+                >
+
+            </div>
+
+
+            <!-- POSITION -->
+
+            <div class="section">
+
+                <div class="section-title">
+                    Position
+                </div>
+
+                <div class="position-grid">
+
+                    <div class="position-box">
+
+                        <label>Horizontal</label>
+
+                        <input
+                            type="number"
+                            id="posX"
+                            value="0"
+                            onchange="changePosition()"
+                        >
+
+                    </div>
+
+                    <div class="position-box">
+
+                        <label>Vertical</label>
+
+                        <input
+                            type="number"
+                            id="posY"
+                            value="0"
+                            onchange="changePosition()"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ASPECT RATIO -->
+
+            <div class="section">
+
+                <div class="section-title">
+                    Aspect Ratio
+                </div>
+
+                <div class="aspect-grid">
+
+                    <button
+                        class="aspect active"
+                        onclick="setAspect('original',this)">
+                        Original
+                    </button>
+
+                    <button
+                        class="aspect"
+                        onclick="setAspect('16:9',this)">
+                        16:9
+                    </button>
+
+                    <button
+                        class="aspect"
+                        onclick="setAspect('9:16',this)">
+                        9:16
+                    </button>
+
+                    <button
+                        class="aspect"
+                        onclick="setAspect('1:1',this)">
+                        1:1
+                    </button>
+
+                    <button
+                        class="aspect"
+                        onclick="setAspect('4:5',this)">
+                        4:5
+                    </button>
+
+                    <button
+                        class="aspect"
+                        onclick="setAspect('4:3',this)">
+                        4:3
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <button
+                    class="reset"
+                    onclick="resetAll()">
+
+                    Reset
+
+                </button>
+
+                <button
+                    class="apply"
+                    onclick="applyTransform()">
+
+                    ✓ Apply
+
+                </button>
+
+            </div>
+
+
+            <div class="status" id="status">
+
+                Original transform selected
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const video =
+    document.getElementById("videoPreview");
+
+const noVideo =
+    document.getElementById("noVideo");
+
+const fileInput =
+    document.getElementById("fileInput");
+
+let rotation = 0;
+let flipX = 1;
+let flipY = 1;
+let zoom = 100;
+let posX = 0;
+let posY = 0;
+let aspect = "original";
+
+
+/* LOAD VIDEO */
+
+const savedVideo =
+    localStorage.getItem("mediaURL");
+
+if(savedVideo){
+
+    video.src = savedVideo;
+
+    video.style.display = "block";
+
+    noVideo.style.display = "none";
+
+}
+
+
+/* IMPORT VIDEO */
+
+fileInput.addEventListener("change",function(){
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    const url =
+        URL.createObjectURL(file);
+
+    video.src = url;
+
+    video.style.display = "block";
+
+    noVideo.style.display = "none";
+
+    localStorage.setItem(
+        "mediaURL",
+        url
+    );
+
+    localStorage.setItem(
+        "mediaName",
+        file.name
+    );
+
+});
+
+
+/* UPDATE TRANSFORM */
+
+function updateTransform(){
+
+    video.style.transform =
+        `translate(${posX}px, ${posY}px)
+         rotate(${rotation}deg)
+         scale(${(zoom / 100) * flipX},
+                ${(zoom / 100) * flipY})`;
+
+}
+
+
+/* ROTATE */
+
+function rotate(degrees){
+
+    rotation += degrees;
+
+    if(rotation >= 360){
+        rotation -= 360;
+    }
+
+    if(rotation <= -360){
+        rotation += 360;
+    }
+
+    updateTransform();
+
+    document.getElementById("status").innerText =
+        "Rotation: " + rotation + "°";
+
+}
+
+
+/* HORIZONTAL FLIP */
+
+function flipHorizontal(){
+
+    flipX *= -1;
+
+    updateTransform();
+
+    document.getElementById("status").innerText =
+        "Horizontal flip applied";
+
+}
+
+
+/* VERTICAL FLIP */
+
+function flipVertical(){
+
+    flipY *= -1;
+
+    updateTransform();
+
+    document.getElementById("status").innerText =
+        "Vertical flip applied";
+
+}
+
+
+/* ZOOM */
+
+function changeZoom(){
+
+    zoom =
+        Number(
+            document.getElementById("zoom").value
+        );
+
+    document.getElementById("zoomValue").innerText =
+        zoom + "%";
+
+    updateTransform();
+
+}
+
+
+/* POSITION */
+
+function changePosition(){
+
+    posX =
+        Number(
+            document.getElementById("posX").value
+        );
+
+    posY =
+        Number(
+            document.getElementById("posY").value
+        );
+
+    updateTransform();
+
+}
+
+
+/* ASPECT RATIO */
+
+function setAspect(value,element){
+
+    aspect = value;
+
+    document
+        .querySelectorAll(".aspect")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+    element.classList.add("active");
+
+    const preview =
+        document.querySelector(".preview-inner");
+
+    if(value === "16:9"){
+
+        preview.style.aspectRatio = "16 / 9";
+
+    }
+    else if(value === "9:16"){
+
+        preview.style.aspectRatio = "9 / 16";
+
+    }
+    else if(value === "1:1"){
+
+        preview.style.aspectRatio = "1 / 1";
+
+    }
+    else if(value === "4:5"){
+
+        preview.style.aspectRatio = "4 / 5";
+
+    }
+    else if(value === "4:3"){
+
+        preview.style.aspectRatio = "4 / 3";
+
+    }
+    else{
+
+        preview.style.aspectRatio = "auto";
+
+    }
+
+    document.getElementById("status").innerText =
+        "Aspect ratio: " + value;
+
+}
+
+
+/* RESET ROTATION */
+
+function resetRotation(){
+
+    rotation = 0;
+
+    flipX = 1;
+
+    flipY = 1;
+
+    updateTransform();
+
+    document.getElementById("status").innerText =
+        "Rotation and flip reset";
+
+}
+
+
+/* RESET EVERYTHING */
+
+function resetAll(){
+
+    rotation = 0;
+    flipX = 1;
+    flipY = 1;
+    zoom = 100;
+    posX = 0;
+    posY = 0;
+    aspect = "original";
+
+    document.getElementById("zoom").value = 100;
+
+    document.getElementById("zoomValue").innerText =
+        "100%";
+
+    document.getElementById("posX").value = 0;
+
+    document.getElementById("posY").value = 0;
+
+    document
+        .querySelectorAll(".aspect")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+    document
+        .querySelector(".aspect")
+        .classList.add("active");
+
+    document.querySelector(".preview-inner")
+        .style.aspectRatio = "auto";
+
+    updateTransform();
+
+    document.getElementById("status").innerText =
+        "Transform reset";
+
+}
+
+
+/* APPLY */
+
+function applyTransform(){
+
+    const data = {
+
+        rotation: rotation,
+        flipX: flipX,
+        flipY: flipY,
+        zoom: zoom,
+        posX: posX,
+        posY: posY,
+        aspect: aspect
+
+    };
+
+    localStorage.setItem(
+        "transformData",
+        JSON.stringify(data)
+    );
+
+    document.getElementById("status").innerText =
+        "✓ Transform applied";
+
+}
+
+
+/* LOAD SAVED TRANSFORM */
+
+const savedTransform =
+    localStorage.getItem("transformData");
+
+if(savedTransform){
+
+    try{
+
+        const data =
+            JSON.parse(savedTransform);
+
+        rotation =
+            Number(data.rotation) || 0;
+
+        flipX =
+            Number(data.flipX) || 1;
+
+        flipY =
+            Number(data.flipY) || 1;
+
+        zoom =
+            Number(data.zoom) || 100;
+
+        posX =
+            Number(data.posX) || 0;
+
+        posY =
+            Number(data.posY) || 0;
+
+        aspect =
+            data.aspect || "original";
+
+        document.getElementById("zoom").value =
+            zoom;
+
+        document.getElementById("zoomValue").innerText =
+            zoom + "%";
+
+        document.getElementById("posX").value =
+            posX;
+
+        document.getElementById("posY").value =
+            posY;
+
+        updateTransform();
+
+    }
+    catch(e){
+
+        console.log("Transform data error");
+
+    }
+
+}
+
+
+/* EXPORT */
+
+function goExport(){
+
+    window.location.href =
+        "export.html";
+
+}
+
+</script>
+
+</body>
+</html>
