@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GyanCut - Filters</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#0d0e11;
+    color:white;
+    min-height:100vh;
+}
+
+/* TOP BAR */
+.topbar{
+    height:60px;
+    background:#17181c;
+    border-bottom:1px solid #292b31;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.project{
+    color:#aaa;
+    font-size:14px;
+}
+
+.export-btn{
+    background:#8b5cf6;
+    border:0;
+    color:white;
+    padding:10px 18px;
+    border-radius:7px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    top:60px;
+    left:0;
+    bottom:0;
+    width:210px;
+    background:#15161a;
+    border-right:1px solid #292b31;
+    padding:15px 10px;
+    overflow-y:auto;
+}
+
+.side-title{
+    color:#777;
+    font-size:11px;
+    text-transform:uppercase;
+    padding:10px;
+}
+
+.side-link{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 12px;
+    margin-bottom:3px;
+    color:#bdbdc4;
+    text-decoration:none;
+    border-radius:7px;
+    font-size:14px;
+}
+
+.side-link:hover{
+    background:#24262d;
+    color:white;
+}
+
+.side-link.active{
+    background:#282032;
+    color:#c084fc;
+}
+
+/* MAIN */
+.main{
+    margin-left:210px;
+    padding-top:60px;
+    min-height:100vh;
+}
+
+.content{
+    padding:24px;
+}
+
+.page-title{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.page-subtitle{
+    color:#888;
+    margin-top:6px;
+    font-size:14px;
+}
+
+/* EDITOR */
+.editor{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:1fr 360px;
+    gap:20px;
+}
+
+/* PREVIEW */
+.preview-box{
+    background:#08090b;
+    border:1px solid #292b31;
+    border-radius:12px;
+    min-height:470px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+}
+
+.preview-box video{
+    max-width:100%;
+    max-height:470px;
+    display:none;
+    object-fit:contain;
+}
+
+.no-video{
+    color:#666;
+    text-align:center;
+}
+
+.no-video .icon{
+    font-size:50px;
+    margin-bottom:12px;
+}
+
+/* CONTROLS */
+.controls{
+    background:#181a20;
+    border:1px solid #292b31;
+    border-radius:12px;
+    padding:18px;
+}
+
+.control-title{
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.import{
+    width:100%;
+    padding:11px;
+    background:#24262d;
+    border:1px solid #343640;
+    color:white;
+    border-radius:7px;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+.import:hover{
+    background:#30323a;
+}
+
+/* FILTER GRID */
+.filter-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+}
+
+.filter{
+    background:#23252b;
+    border:2px solid transparent;
+    border-radius:8px;
+    padding:8px 5px;
+    cursor:pointer;
+    text-align:center;
+    color:#ddd;
+    font-size:11px;
+}
+
+.filter:hover{
+    background:#30323a;
+}
+
+.filter.active{
+    border-color:#a855f7;
+}
+
+.filter-preview{
+    height:55px;
+    border-radius:5px;
+    margin-bottom:6px;
+    background:linear-gradient(135deg,#666,#222);
+}
+
+/* FILTER PREVIEWS */
+.normal{
+    filter:none;
+}
+
+.bw{
+    filter:grayscale(100%);
+}
+
+.vintage{
+    filter:sepia(60%) contrast(90%);
+}
+
+.bright{
+    filter:brightness(140%);
+}
+
+.contrast{
+    filter:contrast(150%);
+}
+
+.saturate{
+    filter:saturate(180%);
+}
+
+.cool{
+    filter:saturate(120%) hue-rotate(20deg);
+}
+
+.warm{
+    filter:sepia(25%) saturate(140%);
+}
+
+.fade{
+    filter:contrast(80%) brightness(115%);
+}
+
+/* INTENSITY */
+.intensity{
+    margin-top:25px;
+}
+
+.intensity-head{
+    display:flex;
+    justify-content:space-between;
+    color:#bbb;
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+input[type="range"]{
+    width:100%;
+    accent-color:#a855f7;
+}
+
+/* BUTTONS */
+.actions{
+    display:flex;
+    gap:10px;
+    margin-top:22px;
+}
+
+.apply{
+    flex:1;
+    background:#8b5cf6;
+    color:white;
+    border:0;
+    padding:12px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.reset{
+    flex:1;
+    background:#292b31;
+    color:white;
+    border:0;
+    padding:12px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+/* STATUS */
+.status{
+    margin-top:15px;
+    padding:11px;
+    border-radius:7px;
+    background:#202127;
+    color:#aaa;
+    font-size:12px;
+    text-align:center;
+}
+
+/* MOBILE */
+@media(max-width:800px){
+
+    .sidebar{
+        width:62px;
+        padding:10px 6px;
+    }
+
+    .side-title{
+        display:none;
+    }
+
+    .side-link{
+        justify-content:center;
+        padding:12px 5px;
+        font-size:0;
+    }
+
+    .side-link span{
+        font-size:19px;
+    }
+
+    .main{
+        margin-left:62px;
+    }
+
+    .project{
+        display:none;
+    }
+
+    .editor{
+        grid-template-columns:1fr;
+    }
+
+    .preview-box{
+        min-height:300px;
+    }
+
+    .preview-box video{
+        max-height:300px;
+    }
+
+    .controls{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+
+    <div class="logo">✂️ GyanCut</div>
+
+    <div class="project">
+        My Video Project
+    </div>
+
+    <button class="export-btn"
+        onclick="goExport()">
+        Export
+    </button>
+
+</div>
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="side-title">Editor</div>
+
+    <a class="side-link" href="index.html">
+        <span>🏠</span> Home
+    </a>
+
+    <a class="side-link" href="media.html">
+        <span>🖼️</span> Media
+    </a>
+
+    <a class="side-link" href="trim.html">
+        <span>✂️</span> Trim
+    </a>
+
+    <a class="side-link" href="text.html">
+        <span>🔤</span> Text
+    </a>
+
+    <a class="side-link" href="audio.html">
+        <span>🎵</span> Audio
+    </a>
+
+    <a class="side-link active" href="filters.html">
+        <span>🎨</span> Filters
+    </a>
+
+    <a class="side-link" href="speed.html">
+        <span>⚡</span> Speed
+    </a>
+
+    <a class="side-link" href="transform.html">
+        <span>↔️</span> Transform
+    </a>
+
+    <a class="side-link" href="effects.html">
+        <span>✨</span> Effects
+    </a>
+
+    <a class="side-link" href="stickers.html">
+        <span>😀</span> Stickers
+    </a>
+
+    <div class="side-title">Project</div>
+
+    <a class="side-link" href="timeline.html">
+        <span>🎞️</span> Timeline
+    </a>
+
+    <a class="side-link" href="preview.html">
+        <span>▶️</span> Preview
+    </a>
+
+    <a class="side-link" href="export.html">
+        <span>📤</span> Export
+    </a>
+
+    <a class="side-link" href="settings.html">
+        <span>⚙️</span> Settings
+    </a>
+
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="content">
+
+        <div class="page-title">
+            🎨 Filters
+        </div>
+
+        <div class="page-subtitle">
+            Give your video a new look with GyanCut filters.
+        </div>
+
+
+        <div class="editor">
+
+            <!-- PREVIEW -->
+            <div class="preview-box">
+
+                <video id="videoPreview"
+                       controls>
+                </video>
+
+                <div class="no-video"
+                     id="noVideo">
+
+                    <div class="icon">🎬</div>
+
+                    <div>
+                        Import a video to start editing
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTROLS -->
+            <div class="controls">
+
+                <div class="control-title">
+                    Filters
+                </div>
+
+                <button class="import"
+                        onclick="document.getElementById('fileInput').click()">
+
+                    📁 Import Video
+
+                </button>
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    accept="video/*"
+                    hidden
+                >
+
+
+                <div class="filter-grid">
+
+                    <div class="filter active"
+                         data-filter="normal"
+                         onclick="selectFilter('normal',this)">
+
+                        <div class="filter-preview normal"></div>
+                        Normal
+
+                    </div>
+
+
+                    <div class="filter"
+                         data-filter="bw"
+                         onclick="selectFilter('bw',this)">
+
+                        <div class="filter-preview bw"></div>
+                        B&W
+
+                    </div>
+
+
+                    <div class="filter"
+                         data-filter="vintage"
+                         onclick="selectFilter('vintage',this)">
+
+                        <div class="filter-preview vintage"></div>
+                        Vintage
+
+                    </div>
+
+
+                    <div class="filter"
+                         data-filter="bright"
+                         onclick="selectFilter('bright',this)">
+
+                        <div class="filter-preview bright"></div>
+                        Bright
+
+                    </div>
+
+
+                    <div class="filter"
+                         data-filter="contrast"
+                         onclick="selectFilter('contrast',this)">
+
+                        <div class="filter-preview contrast"></div>
+                        Contrast
+
+                    </div>
+
+
+                    <div class="filter"
+                         data-filter="saturate"
+                         onclick="selectFilter('saturate',this)">
+
+                        <div class="filter-preview saturate"></div>
+                        Color+
+
+                    </div>
+
+
+                    <div class="filter"
+                         data-filter="cool"
+                         onclick="selectFilter('cool',this)">
+
+                        <div class="filter-preview cool"></div>
+                        Cool
+
+                    </div>
+
+
+                    <div class="filter"
+                         data-filter="warm"
+                         onclick="selectFilter('warm',this)">
+
+                        <div class="filter-preview warm"></div>
+                        Warm
+
+                    </div>
+
+
+                    <div class="filter"
+                         data-filter="fade"
+                         onclick="selectFilter('fade',this)">
+
+                        <div class="filter-preview fade"></div>
+                        Fade
+
+                    </div>
+
+                </div>
+
+
+                <!-- INTENSITY -->
+                <div class="intensity">
+
+                    <div class="intensity-head">
+
+                        <span>Intensity</span>
+
+                        <span id="intensityValue">
+                            100%
+                        </span>
+
+                    </div>
+
+                    <input
+                        type="range"
+                        id="intensity"
+                        min="0"
+                        max="100"
+                        value="100"
+                        oninput="changeIntensity()"
+                    >
+
+                </div>
+
+
+                <!-- ACTIONS -->
+                <div class="actions">
+
+                    <button class="reset"
+                            onclick="resetFilter()">
+
+                        Reset
+
+                    </button>
+
+                    <button class="apply"
+                            onclick="applyFilter()">
+
+                        ✓ Apply
+
+                    </button>
+
+                </div>
+
+
+                <div class="status"
+                     id="status">
+
+                    Normal filter selected
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const video = document.getElementById("videoPreview");
+const noVideo = document.getElementById("noVideo");
+const fileInput = document.getElementById("fileInput");
+
+let selectedFilter = "normal";
+let intensity = 100;
+
+
+/* LOAD SAVED VIDEO */
+
+const savedVideo = localStorage.getItem("mediaURL");
+
+if(savedVideo){
+
+    video.src = savedVideo;
+
+    video.style.display = "block";
+
+    noVideo.style.display = "none";
+
+}
+
+
+/* IMPORT VIDEO */
+
+fileInput.addEventListener("change", function(){
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    const url = URL.createObjectURL(file);
+
+    video.src = url;
+
+    video.style.display = "block";
+
+    noVideo.style.display = "none";
+
+    localStorage.setItem("mediaURL",url);
+
+    localStorage.setItem("mediaName",file.name);
+
+});
+
+
+/* FILTER */
+
+function selectFilter(filter,element){
+
+    selectedFilter = filter;
+
+    document.querySelectorAll(".filter")
+        .forEach(item => {
+
+            item.classList.remove("active");
+
+        });
+
+    element.classList.add("active");
+
+    applyVisualFilter();
+
+    document.getElementById("status").innerText =
+        filterName(filter) + " filter selected";
+
+}
+
+
+/* FILTER NAME */
+
+function filterName(filter){
+
+    const names = {
+
+        normal:"Normal",
+        bw:"Black & White",
+        vintage:"Vintage",
+        bright:"Bright",
+        contrast:"Contrast",
+        saturate:"Color+",
+        cool:"Cool",
+        warm:"Warm",
+        fade:"Fade"
+
+    };
+
+    return names[filter] || "Normal";
+
+}
+
+
+/* INTENSITY */
+
+function changeIntensity(){
+
+    intensity =
+        document.getElementById("intensity").value;
+
+    document.getElementById("intensityValue").innerText =
+        intensity + "%";
+
+    applyVisualFilter();
+
+}
+
+
+/* VISUAL FILTER */
+
+function applyVisualFilter(){
+
+    if(!video.src) return;
+
+    let i = intensity / 100;
+
+    let filter = "none";
+
+    switch(selectedFilter){
+
+        case "bw":
+            filter =
+                `grayscale(${i * 100}%)`;
+            break;
+
+        case "vintage":
+            filter =
+                `sepia(${i * 60}%) contrast(${100 + i * 10}%)`;
+            break;
+
+        case "bright":
+            filter =
+                `brightness(${100 + i * 40}%)`;
+            break;
+
+        case "contrast":
+            filter =
+                `contrast(${100 + i * 50}%)`;
+            break;
+
+        case "saturate":
+            filter =
+                `saturate(${100 + i * 80}%)`;
+            break;
+
+        case "cool":
+            filter =
+                `saturate(${100 + i * 20}%) hue-rotate(${i * 20}deg)`;
+            break;
+
+        case "warm":
+            filter =
+                `sepia(${i * 25}%) saturate(${100 + i * 40}%)`;
+            break;
+
+        case "fade":
+            filter =
+                `contrast(${100 - i * 20}%) brightness(${100 + i * 15}%)`;
+            break;
+
+        default:
+            filter = "none";
+
+    }
+
+    video.style.filter = filter;
+
+}
+
+
+/* APPLY */
+
+function applyFilter(){
+
+    localStorage.setItem(
+        "filter",
+        selectedFilter
+    );
+
+    localStorage.setItem(
+        "filterIntensity",
+        intensity
+    );
+
+    document.getElementById("status").innerText =
+        "✓ " + filterName(selectedFilter) +
+        " filter applied";
+
+}
+
+
+/* RESET */
+
+function resetFilter(){
+
+    selectedFilter = "normal";
+
+    intensity = 100;
+
+    document.getElementById("intensity").value = 100;
+
+    document.getElementById("intensityValue").innerText =
+        "100%";
+
+    document.querySelectorAll(".filter")
+        .forEach(item => {
+
+            item.classList.remove("active");
+
+        });
+
+    document
+        .querySelector('[data-filter="normal"]')
+        .classList.add("active");
+
+    video.style.filter = "none";
+
+    document.getElementById("status").innerText =
+        "Normal filter selected";
+
+}
+
+
+/* EXPORT */
+
+function goExport(){
+
+    window.location.href = "export.html";
+
+}
+
+
+/* LOAD SAVED FILTER */
+
+const savedFilter =
+    localStorage.getItem("filter");
+
+const savedIntensity =
+    localStorage.getItem("filterIntensity");
+
+if(savedFilter){
+
+    selectedFilter = savedFilter;
+
+    document.querySelectorAll(".filter")
+        .forEach(item => {
+
+            item.classList.remove("active");
+
+        });
+
+    const active =
+        document.querySelector(
+            `[data-filter="${savedFilter}"]`
+        );
+
+    if(active){
+        active.classList.add("active");
+    }
+
+}
+
+if(savedIntensity){
+
+    intensity =
+        Number(savedIntensity);
+
+    document.getElementById("intensity").value =
+        intensity;
+
+    document.getElementById("intensityValue").innerText =
+        intensity + "%";
+
+}
+
+applyVisualFilter();
+
+</script>
+
+</body>
+</html>
