@@ -2,469 +2,556 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>VidyCut Editor</title>
+<title>GyanCut - Video Editor</title>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
-    font-family:Arial,sans-serif;
 }
 
 body{
-    background:#08090d;
-    color:white;
-    height:100vh;
+    background:#0d0e11;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
     overflow:hidden;
 }
 
 /* TOP BAR */
-
-.top{
+.topbar{
     height:58px;
+    background:#17181c;
+    border-bottom:1px solid #292b31;
     display:flex;
     align-items:center;
-    justify-content:space-between;
-    padding:0 15px;
-    background:#0d0e13;
-}
-
-.close{
-    font-size:29px;
-    color:#ddd;
+    padding:0 18px;
+    gap:15px;
 }
 
 .logo{
-    font-size:20px;
+    font-size:21px;
     font-weight:bold;
 }
 
 .logo span{
-    color:#8b5cf6;
+    color:#a855f7;
 }
 
-.export{
+.project-name{
+    color:#8d8f98;
+    font-size:14px;
+}
+
+.import-btn{
+    margin-left:auto;
     background:#8b5cf6;
-    border:0;
     color:white;
-    padding:9px 15px;
+    border:none;
+    padding:10px 18px;
     border-radius:8px;
     font-weight:bold;
+    cursor:pointer;
+}
+
+.import-btn:hover{
+    background:#7c3aed;
+}
+
+/* MAIN */
+.main{
+    display:flex;
+    height:calc(100vh - 58px);
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:190px;
+    background:#15161a;
+    border-right:1px solid #292b31;
+    padding:10px 7px;
+    overflow-y:auto;
+}
+
+.menu{
+    display:block;
+    color:#aeb0b8;
+    text-decoration:none;
+    padding:12px 10px;
+    border-radius:8px;
+    margin-bottom:3px;
+    font-size:14px;
+}
+
+.menu:hover,
+.menu.active{
+    background:#29202f;
+    color:#fff;
+}
+
+/* WORKSPACE */
+.workspace{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
 }
 
 /* PREVIEW */
-
-.preview{
-    height:43vh;
-    min-height:280px;
-    background:#111217;
+.preview-area{
+    flex:1;
+    background:#08090b;
     display:flex;
     align-items:center;
     justify-content:center;
     position:relative;
+    overflow:hidden;
 }
 
-video{
-    width:100%;
-    height:100%;
-    object-fit:contain;
+#videoPreview{
+    max-width:88%;
+    max-height:88%;
+    display:none;
+    border-radius:4px;
 }
 
 .empty{
     text-align:center;
-    color:#777984;
+    color:#686a72;
 }
 
 .empty-icon{
-    font-size:55px;
+    font-size:48px;
     margin-bottom:12px;
 }
 
-.add-video{
-    display:inline-block;
-    margin-top:15px;
-    background:#8b5cf6;
-    color:white;
-    padding:12px 22px;
-    border-radius:25px;
-    cursor:pointer;
+.empty p{
+    font-size:14px;
 }
 
-input{
-    display:none;
-}
-
-/* CONTROLS */
-
-.controls{
-    height:48px;
+/* TOOLBAR */
+.toolbar{
+    min-height:72px;
+    background:#17181c;
+    border-top:1px solid #292b31;
+    border-bottom:1px solid #292b31;
     display:flex;
     align-items:center;
-    justify-content:center;
-    gap:35px;
-    background:#0d0e13;
-}
-
-.play{
-    font-size:28px;
-}
-
-.undo{
-    font-size:27px;
-}
-
-/* TIME */
-
-.time{
-    height:25px;
-    display:flex;
-    justify-content:space-between;
-    padding:0 15px;
-    color:#8d8f99;
-    font-size:11px;
-}
-
-/* TIMELINE */
-
-.timeline{
-    height:105px;
-    background:#111217;
-    border-top:1px solid #22242c;
-    border-bottom:1px solid #22242c;
-    padding:10px 10px;
-    position:relative;
-}
-
-.film{
-    height:58px;
-    display:flex;
-    overflow:hidden;
-    border-radius:5px;
-    background:#20222a;
-}
-
-.frame{
-    min-width:75px;
-    height:58px;
-    border-right:2px solid #111;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#777;
-    font-size:12px;
-}
-
-.audio-line{
-    height:4px;
-    background:#22aeea;
-    margin-top:9px;
-    border-radius:5px;
-}
-
-.marker{
-    position:absolute;
-    top:0;
-    bottom:0;
-    width:2px;
-    background:white;
-    left:50%;
-    z-index:5;
-}
-
-.marker:before{
-    content:"";
-    position:absolute;
-    top:0;
-    left:-5px;
-    width:12px;
-    height:12px;
-    background:white;
-    border-radius:50%;
-}
-
-/* TOOLS */
-
-.tools{
-    height:calc(100vh - 58px - 43vh - 48px - 25px - 105px);
-    min-height:125px;
-    background:#0d0e13;
-    display:flex;
-    align-items:center;
+    gap:8px;
+    padding:10px;
     overflow-x:auto;
-    padding:10px 12px;
-    gap:24px;
 }
 
 .tool{
-    min-width:62px;
-    text-align:center;
+    min-width:75px;
+    background:#23252b;
     color:#ddd;
-    font-size:11px;
+    border:1px solid #33353d;
+    border-radius:8px;
+    padding:9px 12px;
+    cursor:pointer;
+    text-align:center;
+    font-size:12px;
+}
+
+.tool:hover{
+    background:#30283a;
+    border-color:#8b5cf6;
 }
 
 .tool-icon{
-    height:48px;
-    width:48px;
-    margin:auto;
-    margin-bottom:7px;
+    display:block;
+    font-size:20px;
+    margin-bottom:4px;
+}
+
+/* TIMELINE */
+.timeline{
+    height:210px;
+    background:#121318;
+    padding:10px;
+    overflow:auto;
+}
+
+.timeline-head{
     display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:23px;
-    border-radius:10px;
+    justify-content:space-between;
+    color:#777983;
+    font-size:11px;
+    margin-bottom:7px;
 }
 
-.tool:active .tool-icon{
-    background:#8b5cf6;
+.track-label{
+    color:#777983;
+    font-size:10px;
+    margin:6px 0;
 }
 
+.track{
+    height:52px;
+    background:#0b0c0f;
+    border:1px solid #292b31;
+    border-radius:6px;
+    margin-bottom:9px;
+    padding:5px;
+    position:relative;
+}
+
+.clip{
+    height:100%;
+    min-width:160px;
+    width:220px;
+    background:#7137c8;
+    border-radius:5px;
+    padding:12px;
+    font-size:12px;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+.audio-track{
+    background:#174f4b;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+
+    .sidebar{
+        width:62px;
+    }
+
+    .menu{
+        font-size:0;
+        text-align:center;
+        padding:12px 3px;
+    }
+
+    .menu::first-letter{
+        font-size:20px;
+    }
+
+    .project-name{
+        display:none;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .timeline{
+        height:180px;
+    }
+
+    .toolbar{
+        min-height:70px;
+    }
+}
 </style>
 </head>
 
 <body>
 
-<!-- TOP -->
-
-<div class="top">
-
-    <div class="close">×</div>
+<!-- TOP BAR -->
+<header class="topbar">
 
     <div class="logo">
-        Vidy<span>Cut</span>
+        ✂️ Gyan<span>Cut</span>
     </div>
 
-    <button class="export"
-            onclick="exportVideo()">
-        Export
+    <div class="project-name">
+        My Video Project
+    </div>
+
+    <button class="import-btn" onclick="openFile()">
+        ＋ Import
     </button>
 
-</div>
+    <input
+        type="file"
+        id="fileInput"
+        accept="video/*,image/*"
+        hidden
+        onchange="importMedia(this)"
+    >
+
+</header>
 
 
-<!-- VIDEO PREVIEW -->
+<!-- MAIN -->
+<div class="main">
 
-<div class="preview">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-    <div class="empty" id="empty">
+        <a class="menu active" href="index.html">
+            🎬 Editor
+        </a>
 
-        <div class="empty-icon">
-            🎬
+        <a class="menu" href="media.html">
+            📁 Media
+        </a>
+
+        <a class="menu" href="trim.html">
+            ✂️ Trim
+        </a>
+
+        <a class="menu" href="text.html">
+            📝 Text
+        </a>
+
+        <a class="menu" href="audio.html">
+            🎵 Audio
+        </a>
+
+        <a class="menu" href="filters.html">
+            🎨 Filters
+        </a>
+
+        <a class="menu" href="speed.html">
+            ⚡ Speed
+        </a>
+
+        <a class="menu" href="transform.html">
+            🔄 Transform
+        </a>
+
+        <a class="menu" href="effects.html">
+            ✨ Effects
+        </a>
+
+        <a class="menu" href="stickers.html">
+            ⭐ Stickers
+        </a>
+
+        <a class="menu" href="timeline.html">
+            🎞️ Timeline
+        </a>
+
+        <a class="menu" href="preview.html">
+            👁️ Preview
+        </a>
+
+        <a class="menu" href="export.html">
+            📤 Export
+        </a>
+
+        <a class="menu" href="settings.html">
+            ⚙️ Settings
+        </a>
+
+    </aside>
+
+
+    <!-- EDITOR -->
+    <section class="workspace">
+
+        <!-- VIDEO PREVIEW -->
+        <div class="preview-area">
+
+            <video
+                id="videoPreview"
+                controls
+                playsinline>
+            </video>
+
+            <div class="empty" id="emptyScreen">
+
+                <div class="empty-icon">
+                    🎬
+                </div>
+
+                <p>
+                    Import a video or photo to start editing
+                </p>
+
+            </div>
+
         </div>
 
-        <div>
-            Add a video to start editing
+
+        <!-- EDITING TOOLS -->
+        <div class="toolbar">
+
+            <button class="tool" onclick="go('media.html')">
+                <span class="tool-icon">📁</span>
+                Media
+            </button>
+
+            <button class="tool" onclick="go('trim.html')">
+                <span class="tool-icon">✂️</span>
+                Trim
+            </button>
+
+            <button class="tool" onclick="go('text.html')">
+                <span class="tool-icon">📝</span>
+                Text
+            </button>
+
+            <button class="tool" onclick="go('audio.html')">
+                <span class="tool-icon">🎵</span>
+                Audio
+            </button>
+
+            <button class="tool" onclick="go('filters.html')">
+                <span class="tool-icon">🎨</span>
+                Filters
+            </button>
+
+            <button class="tool" onclick="go('speed.html')">
+                <span class="tool-icon">⚡</span>
+                Speed
+            </button>
+
+            <button class="tool" onclick="go('transform.html')">
+                <span class="tool-icon">🔄</span>
+                Transform
+            </button>
+
+            <button class="tool" onclick="go('effects.html')">
+                <span class="tool-icon">✨</span>
+                Effects
+            </button>
+
+            <button class="tool" onclick="go('stickers.html')">
+                <span class="tool-icon">⭐</span>
+                Stickers
+            </button>
+
         </div>
 
-        <label class="add-video"
-               for="videoInput">
-            + Add Video
-        </label>
 
-    </div>
+        <!-- TIMELINE -->
+        <div class="timeline">
 
-    <video id="video"
-           controls
-           style="display:none;">
-    </video>
+            <div class="timeline-head">
+                <span>🎞️ TIMELINE</span>
+                <span id="duration">00:00</span>
+            </div>
 
-</div>
+            <div class="track-label">
+                VIDEO
+            </div>
 
+            <div class="track">
 
-<!-- CONTROLS -->
+                <div
+                    class="clip"
+                    id="videoClip">
+                    Import media
+                </div>
 
-<div class="controls">
-
-    <div class="undo">
-        ↶
-    </div>
-
-    <div class="play"
-         onclick="playVideo()">
-        ▶
-    </div>
-
-    <div class="undo">
-        ↷
-    </div>
-
-</div>
+            </div>
 
 
-<!-- TIME -->
+            <div class="track-label">
+                AUDIO
+            </div>
 
-<div class="time">
+            <div class="track">
 
-    <span id="current">
-        00:00
-    </span>
+                <div
+                    class="clip audio-track"
+                    style="width:160px">
+                    🎵 Audio track
+                </div>
 
-    <span id="duration">
-        00:00
-    </span>
+            </div>
+
+        </div>
+
+    </section>
 
 </div>
-
-
-<!-- TIMELINE -->
-
-<div class="timeline">
-
-    <div class="marker"></div>
-
-    <div class="film"
-         id="film">
-
-        <div class="frame">VIDEO</div>
-        <div class="frame">VIDEO</div>
-        <div class="frame">VIDEO</div>
-        <div class="frame">VIDEO</div>
-        <div class="frame">VIDEO</div>
-        <div class="frame">VIDEO</div>
-        <div class="frame">VIDEO</div>
-        <div class="frame">VIDEO</div>
-
-    </div>
-
-    <div class="audio-line"></div>
-
-</div>
-
-
-<!-- EDITING TOOLS -->
-
-<div class="tools">
-
-    <div class="tool"
-         onclick="addVideo()">
-        <div class="tool-icon">＋</div>
-        Add
-    </div>
-
-    <div class="tool"
-         onclick="tool('Trim')">
-        <div class="tool-icon">✂️</div>
-        Trim
-    </div>
-
-    <div class="tool"
-         onclick="tool('Audio')">
-        <div class="tool-icon">🎵</div>
-        Audio
-    </div>
-
-    <div class="tool"
-         onclick="tool('Text')">
-        <div class="tool-icon">T</div>
-        Text
-    </div>
-
-    <div class="tool"
-         onclick="tool('Overlay')">
-        <div class="tool-icon">▣</div>
-        Overlay
-    </div>
-
-    <div class="tool"
-         onclick="tool('Effects')">
-        <div class="tool-icon">✦</div>
-        Effects
-    </div>
-
-    <div class="tool"
-         onclick="tool('Filters')">
-        <div class="tool-icon">◐</div>
-        Filters
-    </div>
-
-    <div class="tool"
-         onclick="tool('Speed')">
-        <div class="tool-icon">⚡</div>
-        Speed
-    </div>
-
-</div>
-
-
-<input type="file"
-       id="videoInput"
-       accept="video/*"
-       onchange="loadVideo(event)">
 
 
 <script>
 
-function addVideo(){
+function openFile(){
 
     document
-    .getElementById("videoInput")
-    .click();
+        .getElementById("fileInput")
+        .click();
 
 }
 
 
-function loadVideo(event){
+function importMedia(input){
 
-    const file =
-        event.target.files[0];
+    const file = input.files[0];
 
-    if(!file) return;
+    if(!file){
+        return;
+    }
+
+    const url = URL.createObjectURL(file);
 
     const video =
-        document.getElementById("video");
+        document.getElementById("videoPreview");
 
     const empty =
-        document.getElementById("empty");
+        document.getElementById("emptyScreen");
 
-    video.src =
-        URL.createObjectURL(file);
-
-    video.style.display =
-        "block";
-
-    empty.style.display =
-        "none";
-
-}
+    const clip =
+        document.getElementById("videoClip");
 
 
-function playVideo(){
+    if(file.type.startsWith("video/")){
 
-    const video =
-        document.getElementById("video");
+        video.src = url;
 
-    if(video.paused){
+        video.style.display = "block";
 
-        video.play();
+        empty.style.display = "none";
 
-    }else{
+        video.onloadedmetadata = function(){
 
-        video.pause();
+            const minutes =
+                Math.floor(video.duration / 60);
+
+            const seconds =
+                Math.floor(video.duration % 60);
+
+            document.getElementById("duration")
+                .textContent =
+                String(minutes).padStart(2,"0")
+                + ":" +
+                String(seconds).padStart(2,"0");
+
+        };
 
     }
 
-}
+    else if(file.type.startsWith("image/")){
+
+        video.style.display = "none";
+
+        empty.innerHTML =
+            '<div class="empty-icon">🖼️</div>' +
+            '<p>' + file.name + '</p>';
+
+    }
 
 
-function tool(name){
+    clip.textContent = file.name;
 
-    alert(
-        name +
-        " tool आपण पुढच्या step मध्ये functional करू."
+    localStorage.setItem(
+        "mediaName",
+        file.name
+    );
+
+    localStorage.setItem(
+        "mediaURL",
+        url
     );
 
 }
 
 
-function exportVideo(){
+function go(page){
 
-    alert(
-        "Export system पुढच्या step मध्ये बनवूया 🎬"
-    );
+    window.location.href = page;
 
 }
 
